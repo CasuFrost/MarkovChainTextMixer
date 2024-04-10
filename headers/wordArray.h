@@ -28,7 +28,7 @@ void addWord(char *s){
         words[offset+i]=s[i];
     }
 
-    words[offset+strlen(s)]='\n';
+    //words[offset+strlen(s)]='\n';
 
 
 }

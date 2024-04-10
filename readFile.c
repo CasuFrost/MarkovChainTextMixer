@@ -43,9 +43,12 @@ int main(int argc, char *argv[]){
 
     for(int i = 0;i<fileSize;i++){ // Test printing file
 
+        
+
         if(src[i]==' ' || src[i]=='\n' ){
             j=0;
             addWord(tmp+'\0');
+            printf("%s\n",tmp);
             for(int k = 0;k<strlen(tmp);k++){ 
                 tmp[k]=' ';
             }
@@ -55,10 +58,11 @@ int main(int argc, char *argv[]){
         }
  
     }
+    printf("%s\n",tmp);
     addWord(tmp+'\0');
 
-
-    printWords();
+    //printWords();
+    //printf("\n%d\n",wordsLenght);
     
     exit(0);
 }
