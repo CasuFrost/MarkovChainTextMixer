@@ -1,0 +1,2 @@
+ALL:
+	gcc readFile.c
