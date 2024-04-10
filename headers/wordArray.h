@@ -5,22 +5,11 @@ un insieme.*/
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-
-#define WORD_LENGHT 31
+#include "structures.h"
 
 char *words;
 int wordsLenght = 0;
 int wordSize = 0;
-
-struct wordFrequency{
-    char word[32]; /*30 byte per la parola, 1 byte per un eventuale apostrofo, il byte finale per '\0' */
-    float frequency;
-}
-
-struct words{
-    char *word;
-    wordFrequency *near;
-}
 
 void wordsInit()
 { // Inizializza la struttura che conterrà le parole del file

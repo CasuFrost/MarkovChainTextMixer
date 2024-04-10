@@ -5,6 +5,7 @@
 #include <sys/fcntl.h>
 
 // Headers personali
+#include "headers/ioOperation.h"
 #include "headers/wordArray.h"
 
 int main(int argc, char *argv[])
@@ -38,6 +39,8 @@ int main(int argc, char *argv[])
         exit(1);
     }
     close(fdIn);
+
+    /* A questo punto del codice, all'interno del buffer 'src' è presente il file */
 
     wordsInit();
 
