@@ -1,2 +1,2 @@
 ALL:
-	gcc readFile.c
+	gcc readFile.c -w
