@@ -6,10 +6,12 @@
 
 // Headers personali
 // #include "headers/ioOperation.h"
+
 #include "headers/structures.h"
 
 int main()
 {
     struct words a;
+
     printf("%d", sizeof(a));
 }

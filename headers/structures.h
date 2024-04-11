@@ -5,6 +5,7 @@ struct wordFrequency
 {
     char word[WORD_LENGHT];
     float frequency;
+    int nearSize;
 };
 
 struct words
@@ -15,10 +16,12 @@ struct words
 
 struct words *fileWords;
 int size = 0;
+
 void initWordsArray()
 {
     fileWords = malloc(40);
 }
+
 void addWord(struct words w)
 {
     fileWords[size * WORDS_TYPE_SIZE] = w;

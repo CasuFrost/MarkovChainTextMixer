@@ -42,10 +42,10 @@ int main(int argc, char *argv[])
 
     /* A questo punto del codice, all'interno del buffer 'src' è presente il file */
 
-    wordsInit();
-
     char tmp[WORD_LENGHT];
     int j = 0;
+
+    int wordsCounter = 0; /* Questa variabile conterrà il numero di parole del file */
 
     for (int i = 0; i < fileSize; i++)
     { // Test printing file
@@ -58,9 +58,10 @@ int main(int argc, char *argv[])
             j = 0;
             if (tmp[0] != ' ')
             {
+                wordsCounter++;
                 printf("%s\n", tmp);
             }
-            addWord(tmp);
+            // addWord(tmp);
             for (int k = 0; k < strlen(tmp); k++)
             {
                 tmp[k] = ' ';
@@ -74,12 +75,13 @@ int main(int argc, char *argv[])
     }
     if (tmp[0] != ' ')
     {
+        wordsCounter++;
         printf("%s\n", tmp);
     }
-    addWord(tmp);
+    // addWord(tmp);
 
     // printWords();
-    printf("\n%d\n", wordsLenght);
+    printf("\n%d\n", wordsCounter);
 
     exit(0);
 }

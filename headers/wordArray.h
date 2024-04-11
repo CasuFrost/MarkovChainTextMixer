@@ -5,7 +5,9 @@ un insieme.*/
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "structures.h"
+#define WORD_LENGHT 32 /*30 byte per la parola, 1 byte per un eventuale apostrofo, il byte finale per '\0' */
+
+// #include "structures.h"
 
 char *words;
 int wordsLenght = 0;
