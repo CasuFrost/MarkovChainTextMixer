@@ -5,35 +5,14 @@
 #include <sys/fcntl.h>
 
 // Headers personali
-#include "headers/wordArray.h"
 
-void prettyPrintWords(char **array_parole, int size)
-{
-    printf("-----\n");
-    for (int i = 0; i < size; i++)
-    {
-        printf("| %s |\n", array_parole[i]);
-        printf("-----\n");
-    }
-}
-
-int checkIfWordInArray(char **array_parole, int size, char word[WORD_LENGHT]) /*ritorna 1 se la parola 'word' si trova
- nell'array 'array_parole'*/
-{
-    for (int i = 0; i < size; i++)
-    {
-        if (strcmp(array_parole[i], word) == 0)
-        {
-            return 1;
-        }
-    }
-    return 0;
-}
+#include "headers/stringOpertion.h" /* contiene funzioni riguardo il controllo delle stringhe*/
 
 char *putFileInBuffer(char *fileName, int *size)
 { /*Questa funzione prende come input il path di un file, e restituisce un puntatore di caratteri contenente
 il file letto, inoltre, prende come input anche un intero, che verrà aggiornato e conterrà le dimensioni
 in byte del file.*/
+
     int fdIn = open(fileName, O_RDONLY);
 
     if (fdIn == -1)
@@ -76,25 +55,21 @@ aggiornato e conterrà il numero di parole*/
     int fileSize;
     char tmp[WORD_LENGHT];
     char *src = putFileInBuffer(fileName, &fileSize);
-    int j = 0; // relative index
+    int j = 0; /* Sarà l'index relativo della parola letta, se 0, vuol dire che si sta attendendo di leggere la prima lettera di una parola*/
 
     char **array_parole = malloc(0); // Questo array conterrà tutte le parole lette
 
     for (int i = 0; i < fileSize; i++)
     {
-        // printf("%d ", (int)src[i]);
-        if ((int)src[i] == 10 || (int)src[i] == 32) // Viene letto uno spazio o un accapo
+        if (punteggiaturaDaScartare(src[i]))
         {
-            if (j == 0)
+            // C'è della punteggiatura da scartare
+            if (j != 0)
             {
-                // parola iniziata
-            }
-            else
-            {
-                // parola finita
-                tmp[j] = '\0'; // A questo punto 'tmp' contiene la parola letta
+                tmp[j] = '\0'; /* A questo punto 'tmp' contiene la parola letta, quindi aggiungo il simbolo di fine stringa*/
+                minuscolaStringa(tmp);
 
-                if (!checkIfWordInArray(array_parole, wordsCounter, tmp))
+                if (!checkIfWordInArray(array_parole, wordsCounter, tmp)) /* Voglio aggiungere la parola esclusivamente se nuova */
                 {
 
                     wordsCounter++;                                                      // Aumento una parola
@@ -106,16 +81,114 @@ aggiornato e conterrà il numero di parole*/
 
                 j = 0;
             }
+            continue;
         }
-        else
+        if ((int)src[i] == 39) // C'è un apostrofo
+        {
+            if (j != 0)
+            {
+                tmp[j] = src[i];
+                tmp[j + 1] = '\0';
+                minuscolaStringa(tmp);
+                if (!checkIfWordInArray(array_parole, wordsCounter, tmp)) /* Voglio aggiungere la parola esclusivamente se nuova */
+                {
+
+                    wordsCounter++;                                                      // Aumento una parola
+                    array_parole = realloc(array_parole, wordsCounter * sizeof(char *)); // Aggiungo una stringa all'array di stringhe
+
+                    array_parole[wordsCounter - 1] = malloc(WORD_LENGHT); // creo la stringa
+                    strcpy(array_parole[wordsCounter - 1], tmp);          // Gli assegno il valore della parola letta
+                }
+                j = 0;
+            }
+            continue;
+        }
+        if (src[i] == '!' || src[i] == '.' || src[i] == '?') // Gestione dei punti
+        {
+            if (j == 0)
+            {
+                /*trovato punto da solo*/
+                tmp[0] = src[i];
+                tmp[1] = '\0'; /* A questo punto 'tmp' contiene la parola letta, quindi aggiungo il simbolo di fine stringa*/
+
+                if (!checkIfWordInArray(array_parole, wordsCounter, tmp)) /* Voglio aggiungere la parola esclusivamente se nuova */
+                {
+
+                    wordsCounter++;                                                      // Aumento una parola
+                    array_parole = realloc(array_parole, wordsCounter * sizeof(char *)); // Aggiungo una stringa all'array di stringhe
+
+                    array_parole[wordsCounter - 1] = malloc(WORD_LENGHT); // creo la stringa
+                    strcpy(array_parole[wordsCounter - 1], tmp);          // Gli assegno il valore della parola letta
+                }
+                continue;
+            }
+            else
+            {
+                // La parola attuale va salvata nel buffer
+                tmp[j] = '\0'; /* A questo punto 'tmp' contiene la parola letta, quindi aggiungo il simbolo di fine stringa*/
+                minuscolaStringa(tmp);
+
+                if (!checkIfWordInArray(array_parole, wordsCounter, tmp)) /* Voglio aggiungere la parola esclusivamente se nuova */
+                {
+
+                    wordsCounter++;                                                      // Aumento una parola
+                    array_parole = realloc(array_parole, wordsCounter * sizeof(char *)); // Aggiungo una stringa all'array di stringhe
+
+                    array_parole[wordsCounter - 1] = malloc(WORD_LENGHT); // creo la stringa
+                    strcpy(array_parole[wordsCounter - 1], tmp);          // Gli assegno il valore della parola letta
+                }
+
+                j = 0;
+
+                // Ora salvo il punto
+                tmp[0] = src[i];
+                tmp[1] = '\0';
+                if (!checkIfWordInArray(array_parole, wordsCounter, tmp)) /* Voglio aggiungere la parola esclusivamente se nuova */
+                {
+
+                    wordsCounter++;                                                      // Aumento una parola
+                    array_parole = realloc(array_parole, wordsCounter * sizeof(char *)); // Aggiungo una stringa all'array di stringhe
+
+                    array_parole[wordsCounter - 1] = malloc(WORD_LENGHT); // creo la stringa
+                    strcpy(array_parole[wordsCounter - 1], tmp);          // Gli assegno il valore della parola letta
+                }
+                continue;
+            }
+        }
+        // printf("%d ", (int)src[i]);
+        if ((int)src[i] == 10 || (int)src[i] == 32) // Viene letto uno spazio o un accapo
+        {
+            if (j != 0) /*è stato letto uno spazio e c'è una parola nel buffer, va salvata la parola e svuotato il buffer*/
+            {
+                // parola finita
+                tmp[j] = '\0'; /* A questo punto 'tmp' contiene la parola letta, quindi aggiungo il simbolo di fine stringa*/
+                minuscolaStringa(tmp);
+
+                if (!checkIfWordInArray(array_parole, wordsCounter, tmp)) /* Voglio aggiungere la parola esclusivamente se nuova */
+                {
+
+                    wordsCounter++;                                                      // Aumento una parola
+                    array_parole = realloc(array_parole, wordsCounter * sizeof(char *)); // Aggiungo una stringa all'array di stringhe
+
+                    array_parole[wordsCounter - 1] = malloc(WORD_LENGHT); // creo la stringa
+
+                    strcpy(array_parole[wordsCounter - 1], tmp); // Gli assegno il valore della parola letta
+                }
+
+                j = 0;
+            }
+        }
+        else /* La parola continua, metto il carattere nel buffer 'tmp'*/
         {
             tmp[j] = src[i];
             j++;
         }
-    }
+    } // Fine del ciclo 'for'
 
-    if (j != 0)
+    if (j != 0) /*Se l'ultima lettera è un carattere, la parola nel buffer non è stata ancora aggiunta all'array*/
     {
+        tmp[j] = '\0'; /* A questo punto 'tmp' contiene la parola letta, quindi aggiungo il simbolo di fine stringa*/
+        minuscolaStringa(tmp);
         if (!checkIfWordInArray(array_parole, wordsCounter, tmp))
         {
 
@@ -123,7 +196,8 @@ aggiornato e conterrà il numero di parole*/
             array_parole = realloc(array_parole, wordsCounter * sizeof(char *)); // Aggiungo una stringa all'array di stringhe
 
             array_parole[wordsCounter - 1] = malloc(WORD_LENGHT); // creo la stringa
-            strcpy(array_parole[wordsCounter - 1], tmp);          // Gli assegno il valore della parola letta
+
+            strcpy(array_parole[wordsCounter - 1], tmp); // Gli assegno il valore della parola letta
         }
     }
 
@@ -139,9 +213,7 @@ int main(int argc, char *argv[])
 
     char **array_parole = getWordFromFile(argv[1], &wordsCounter); /* Conta le parole del file */
 
-    printf("il file contiene %d parole distinte.\n", wordsCounter);
-
-    // prettyPrintWords(array_parole, wordsCounter);
-
+    prettyPrintWords(array_parole, wordsCounter);
+    printf("\nil file contiene %d parole distinte.\n", wordsCounter);
     exit(0);
 }

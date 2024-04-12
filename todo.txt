@@ -1,0 +1,3 @@
+Creare in 'stringOperation.h' la funzione che aggiorna l'array 
+di stringhe piuttosto che riscrivere le stesse cose troppe volte 
+nel file 'readFile.c'
