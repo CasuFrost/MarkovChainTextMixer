@@ -16,6 +16,14 @@ stessa, e un insieme di puntatori ad una struttura 'Nodo frequenza'.
 Il 'Nodo frequenza' non è altro che una struttura contenente una stringa ed un carattere float.
 
 */
+void addWordToArray(int *wordsCounter, char **array_parole, char tmp[WORD_LENGHT])
+{
+    *wordsCounter++;                                                      // Aumento una parola
+    array_parole = realloc(array_parole, *wordsCounter * sizeof(char *)); // Aggiungo una stringa all'array di stringhe
+
+    array_parole[*wordsCounter - 1] = malloc(WORD_LENGHT); // creo la stringa
+    strcpy(array_parole[*wordsCounter - 1], tmp);          // Gli assegno il valore della parola letta
+}
 
 int *matrix;
 int n;
@@ -51,43 +59,9 @@ void initMatrix(int words)
     // printf("\n\n");
 }
 
-int getMatrixValue(int i, int j)
-{
-    return matrix[i * n + j];
-}
-
 /* matrix[i,j]=x implica che
 array_parole[j] si trova dopo array_parole[i] con una frequenza x
 */
-
-/*
-struct nodoFrequenza
-{
-    char parola[WORD_LENGHT];
-    float frequenza;
-};
-
-struct nodoParola
-{
-    char parola[WORD_LENGHT];
-    struct nodoFrequenza *successivi;
-    int numSuccessivi; // Quante parole sono successive a questa
-};
-
-struct nodoParola *parole;
-int numParole = 0;
-
-void init()
-{
-    parole = malloc(0);
-}
-
-void addParola(struct nodoParola p)
-{
-    numParole++;
-    parole = realloc(parole, numParole * sizeof(struct nodoParola));
-    parole[numParole - 1] = p;
-}*/
 
 int punteggiaturaDaScartare(char c)
 {
@@ -123,7 +97,7 @@ void fillMatrixWithWord(char *fileName, char **array_parole, int wordsCounter)
                 minuscolaStringa(currentWord);
                 currentId = getWordArrayId(array_parole, wordsCounter, currentWord);
                 previousId = getWordArrayId(array_parole, wordsCounter, previousWord);
-                matrix[currentId * n + previousId]++;
+                matrix[previousId * n + currentId]++;
                 strcpy(previousWord, currentWord);
                 j = 0;
             }
@@ -140,7 +114,7 @@ void fillMatrixWithWord(char *fileName, char **array_parole, int wordsCounter)
 
                 currentId = getWordArrayId(array_parole, wordsCounter, currentWord);
                 previousId = getWordArrayId(array_parole, wordsCounter, previousWord);
-                matrix[currentId * n + previousId]++;
+                matrix[previousId * n + currentId]++;
                 strcpy(previousWord, currentWord);
 
                 j = 0;
@@ -158,7 +132,7 @@ void fillMatrixWithWord(char *fileName, char **array_parole, int wordsCounter)
 
                 currentId = getWordArrayId(array_parole, wordsCounter, currentWord);
                 previousId = getWordArrayId(array_parole, wordsCounter, previousWord);
-                matrix[currentId * n + previousId]++;
+                matrix[previousId * n + currentId]++;
                 strcpy(previousWord, currentWord);
 
                 continue;
@@ -172,7 +146,7 @@ void fillMatrixWithWord(char *fileName, char **array_parole, int wordsCounter)
 
                 currentId = getWordArrayId(array_parole, wordsCounter, currentWord);
                 previousId = getWordArrayId(array_parole, wordsCounter, previousWord);
-                matrix[currentId * n + previousId]++;
+                matrix[previousId * n + currentId]++;
                 strcpy(previousWord, currentWord);
 
                 j = 0;
@@ -183,7 +157,7 @@ void fillMatrixWithWord(char *fileName, char **array_parole, int wordsCounter)
 
                 currentId = getWordArrayId(array_parole, wordsCounter, currentWord);
                 previousId = getWordArrayId(array_parole, wordsCounter, previousWord);
-                matrix[currentId * n + previousId]++;
+                matrix[previousId * n + currentId]++;
                 strcpy(previousWord, currentWord);
 
                 continue;
@@ -201,7 +175,7 @@ void fillMatrixWithWord(char *fileName, char **array_parole, int wordsCounter)
 
                 currentId = getWordArrayId(array_parole, wordsCounter, currentWord);
                 previousId = getWordArrayId(array_parole, wordsCounter, previousWord);
-                matrix[currentId * n + previousId]++;
+                matrix[previousId * n + currentId]++;
 
                 strcpy(previousWord, currentWord);
                 j = 0;
@@ -221,14 +195,14 @@ void fillMatrixWithWord(char *fileName, char **array_parole, int wordsCounter)
 
         currentId = getWordArrayId(array_parole, wordsCounter, currentWord);
         previousId = getWordArrayId(array_parole, wordsCounter, previousWord);
-        matrix[currentId * n + previousId]++;
+        matrix[previousId * n + currentId]++;
     }
     if (strcmp(currentWord, ".") != 0)
     {
         /*Se l'ultima parola non è il punto, bisogna collegare la prima e l'ultima parola per evitare situazioni
         in cui il programma non sa quale altra parola usare*/
 
-        matrix[0 * n + wordsCounter - 1]++; // Prima del punto, c'è l'ultima parola
+        matrix[(wordsCounter - 1) * n + 0]++; // Prima del punto, c'è l'ultima parola
     }
 }
 
@@ -236,26 +210,31 @@ void printFrequence(char **array_parole, char *fileName) /*Questa funzione legge
 {
     FILE *fp;
 
-    fp = fopen(fileName, "w+");
+    fp = fopen(fileName, "w+"); // Creo il puntatore al file
 
     for (int i = 0; i < n; i++) /*Scorro ogni riga della matrice*/
     {
         // Faccio la somma della riga attuale
-        int rawSum = 0;
+        int rawSum = 0;             /* Questa variabile salverà per ogni riga la somma delle occorrenze delle parole a seguito di quella controllata correntemente*/
         for (int j = 0; j < n; j++) /*Scorro ogni riga della matrice*/
         {
             rawSum += matrix[i * n + j];
         }
-        fprintf(fp, "%s", array_parole[i]);
-        for (int j = 0; j < n; j++) /*Scorro ogni riga della matrice*/
+
+        fprintf(fp, "%s", array_parole[i]); // Scrivo la parola corrente
+
+        for (int j = 0; j < n; j++) /*Scorro le parole che la seguono*/
         {
-            if (matrix[i * n + j] != 0)
+            if (matrix[i * n + j] != 0) /*Se le occorrenze sono diverse da zero, devo scrivere la frequenza*/
             {
                 float f = (float)matrix[i * n + j] / (float)rawSum;
-                fprintf(fp, ",%s,%f", array_parole[j], f);
+                fprintf(fp, ",%s,%.4f", array_parole[j], f);
             }
         }
-        fprintf(fp, "\n");
+        if (i != n - 1)
+        {
+            fprintf(fp, "\n"); // Vado a capo nel file CSV
+        }
     }
 
     fclose(fp);

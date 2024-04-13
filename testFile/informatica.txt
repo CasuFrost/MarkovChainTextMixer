@@ -1,4 +1,4 @@
-## L'informatica: la scienza dell'informazione
+L'informatica: la scienza dell'informazione
 
 L'informatica è la **scienza che studia l'elaborazione dell'informazione** attraverso procedure automatizzate. Si occupa di come i dati vengono rappresentati, memorizzati, trasmessi e utilizzati. In particolare, studia i **fondamenti teorici dell'informazione**, la sua **computazione a livello logico** e le **tecniche pratiche per la sua implementazione** in sistemi elettronici automatizzati, detti **sistemi informatici**.
 

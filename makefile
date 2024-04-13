@@ -1,2 +1,2 @@
 ALL:
-	gcc readFile.c -w
+	gcc main.c -w -o singleProcess.out

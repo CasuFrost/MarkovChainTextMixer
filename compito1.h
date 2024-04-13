@@ -5,8 +5,7 @@
 #include <sys/fcntl.h>
 
 // Headers personali
-
-#include "headers/stringOpertion.h" /* contiene funzioni riguardo il controllo delle stringhe*/
+#include "compito2.h"
 
 char **getWordFromFile(char *fileName, int *numberOfWords) /* Questa funzione prende come input il nome di un file, e restituisce
 un array di stringhe contenete le parole lette nel file.  prende come input anche un intero, che verrà
@@ -41,12 +40,12 @@ aggiornato e conterrà il numero di parole*/
 
                 if (!checkIfWordInArray(array_parole, wordsCounter, tmp)) /* Voglio aggiungere la parola esclusivamente se nuova */
                 {
-
                     wordsCounter++;                                                      // Aumento una parola
                     array_parole = realloc(array_parole, wordsCounter * sizeof(char *)); // Aggiungo una stringa all'array di stringhe
 
                     array_parole[wordsCounter - 1] = malloc(WORD_LENGHT); // creo la stringa
-                    strcpy(array_parole[wordsCounter - 1], tmp);          // Gli assegno il valore della parola letta
+
+                    strcpy(array_parole[wordsCounter - 1], tmp); // Gli assegno il valore della parola letta
                 }
 
                 j = 0;
@@ -176,29 +175,17 @@ aggiornato e conterrà il numero di parole*/
     return array_parole;
 }
 
-int main(int argc, char *argv[])
+int compito1(char *input, char *output)
 {
-    if (argc < 3)
-    {
-        printf("Devi passare un file in input ed uno in output!");
-        exit(1);
-    }
 
     int wordsCounter = 0; /* Questa variabile conterrà il numero di parole del file */
 
-    char **array_parole = getWordFromFile(argv[1], &wordsCounter); /* Conta le parole del file */
+    char **array_parole = getWordFromFile(input, &wordsCounter); /* Conta le parole del file */
 
     initMatrix(wordsCounter);
-    fillMatrixWithWord(argv[1], array_parole, wordsCounter);
+    fillMatrixWithWord(input, array_parole, wordsCounter);
 
-    // prettyPrintWords(array_parole, wordsCounter);
-
-    // printf("\nil file contiene %d parole distinte.\n", wordsCounter);
-
-    // printMatrix(wordsCounter);
-
-    // printf("%d", getIdFromArray(array_parole, "cazzo", wordsCounter));
-    printFrequence(array_parole, argv[2]);
+    printFrequence(array_parole, output);
     free(array_parole);
     exit(0);
 }

@@ -4,6 +4,7 @@
         "stringopertion.h": "c",
         "iooperation.h": "c",
         "mman.h": "c",
-        "wordarray.h": "c"
+        "wordarray.h": "c",
+        "compito1.h": "c"
     }
 }
