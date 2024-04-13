@@ -1,8 +1,7 @@
 #include <string.h>
 #include <stdio.h>
 
-#define WORD_LENGHT 32 /*30 byte per la parola, 1 byte per un eventuale apostrofo, il byte finale per '\0' */
-
+#include "wordArray.h"
 /*Questo file contiene alcune funzioni sul controllo e la modifica delle stringhe o dei caratteri*/
 
 void minuscolaStringa(char *s)
@@ -14,17 +13,6 @@ void minuscolaStringa(char *s)
             s[i] += 32;
         }
     }
-}
-
-int punteggiaturaDaScartare(char c)
-{
-    if (((int)c >= 34 && (int)c <= 38) || ((int)c >= 40 && (int)c <= 45) ||
-        ((int)c >= 58 && (int)c <= 62) || ((int)c >= 91 && (int)c <= 96) ||
-        ((int)c >= 123 && (int)c <= 126))
-    {
-        return 1;
-    }
-    return 0;
 }
 
 void prettyPrintWords(char **array_parole, int size)
@@ -47,6 +35,19 @@ int checkIfWordInArray(char **array_parole, int size, char word[WORD_LENGHT]) /*
         }
     }
     return 0;
+}
+
+int getWordArrayId(char **array_parole, int size, char word[WORD_LENGHT]) /*ritorna l'id della parola nell'array*/
+{
+
+    for (int i = 0; i < size; i++)
+    {
+        if (strcmp(array_parole[i], word) == 0)
+        {
+            return i;
+        }
+    }
+    return -1;
 }
 
 void addWordToWordArray(char **array_parole, int *wordsCounter, char *tmp)

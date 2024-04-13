@@ -5,10 +5,11 @@
 #include <sys/stat.h>
 #include <sys/fcntl.h>
 
-char *putFileInBuffer(char *fileName) /*Questa funzione riceve in input il path di un file, e restituisce un
- puntatore ad una stringa contenente il file.*/
-{
-    void *src;
+char *putFileInBuffer(char *fileName, int *size)
+{ /*Questa funzione prende come input il path di un file, e restituisce un puntatore di caratteri contenente
+il file letto, inoltre, prende come input anche un intero, che verrà aggiornato e conterrà le dimensioni
+in byte del file.*/
+
     int fdIn = open(fileName, O_RDONLY);
 
     if (fdIn == -1)
@@ -25,17 +26,29 @@ char *putFileInBuffer(char *fileName) /*Questa funzione riceve in input il path 
         exit(1);
     }
 
-    int fileSize = sbuf.st_size; // Le dimensioni del file in input
+    *size = sbuf.st_size + 1; // Le dimensioni del file in input
+    if (sbuf.st_size == 0)
+    {
+        char *src = malloc(0);
+        return src;
+    }
 
-    src = mmap(0, fileSize, PROT_READ, MAP_SHARED, fdIn, 0);
+    char *src = mmap(NULL, sbuf.st_size, PROT_READ, MAP_SHARED, fdIn, 0);
 
     if (src == MAP_FAILED)
     { // Eseguo il mapping del file nel buffer 'src'
         printf("errore nel mapping del file \n");
         exit(1);
     }
-    close(fdIn);
+    char *src2 = malloc(sbuf.st_size + 1);
+    src2[0] = '.';
+    for (int i = 1; i < sbuf.st_size + 1; i++)
+    {
+        src2[i] = src[i - 1];
+    }
 
-    return (char *)src;
+    close(fdIn);
     /* A questo punto del codice, all'interno del buffer 'src' è presente il file */
+    *size -= 1;
+    return src;
 }

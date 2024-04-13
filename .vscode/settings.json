@@ -1,6 +1,9 @@
 {
     "files.associations": {
         "stdlib.h": "c",
-        "stringopertion.h": "c"
+        "stringopertion.h": "c",
+        "iooperation.h": "c",
+        "mman.h": "c",
+        "wordarray.h": "c"
     }
 }

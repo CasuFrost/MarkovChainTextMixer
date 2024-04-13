@@ -8,45 +8,6 @@
 
 #include "headers/stringOpertion.h" /* contiene funzioni riguardo il controllo delle stringhe*/
 
-char *putFileInBuffer(char *fileName, int *size)
-{ /*Questa funzione prende come input il path di un file, e restituisce un puntatore di caratteri contenente
-il file letto, inoltre, prende come input anche un intero, che verrà aggiornato e conterrà le dimensioni
-in byte del file.*/
-
-    int fdIn = open(fileName, O_RDONLY);
-
-    if (fdIn == -1)
-    { // Viene aperto il file input in sola lettura
-        printf("errore nell'apertura di %s\n", fileName);
-        exit(1);
-    }
-
-    struct stat sbuf; // Definisco la struttura in cui saranno presenti le informazioni del file aperto.
-
-    if (fstat(fdIn, &sbuf) == -1)
-    { // Leggo le informazioni del file
-        printf("errore nella lettura delle informazioni del file %s\n", fileName);
-        exit(1);
-    }
-
-    *size = sbuf.st_size; // Le dimensioni del file in input
-    if (sbuf.st_size == 0)
-    {
-        char *src = malloc(0);
-        return src;
-    }
-    char *src = mmap(0, sbuf.st_size, PROT_READ, MAP_SHARED, fdIn, 0);
-
-    if (src == MAP_FAILED)
-    { // Eseguo il mapping del file nel buffer 'src'
-        printf("errore nel mapping del file \n");
-        exit(1);
-    }
-    close(fdIn);
-    /* A questo punto del codice, all'interno del buffer 'src' è presente il file */
-    return src;
-}
-
 char **getWordFromFile(char *fileName, int *numberOfWords) /* Questa funzione prende come input il nome di un file, e restituisce
 un array di stringhe contenete le parole lette nel file.  prende come input anche un intero, che verrà
 aggiornato e conterrà il numero di parole*/
@@ -58,6 +19,15 @@ aggiornato e conterrà il numero di parole*/
     int j = 0; /* Sarà l'index relativo della parola letta, se 0, vuol dire che si sta attendendo di leggere la prima lettera di una parola*/
 
     char **array_parole = malloc(0); // Questo array conterrà tutte le parole lette
+
+    /*Come prima parola, aggiungo il punto*/
+    char punto[WORD_LENGHT] = ".";
+    wordsCounter++;                                                      /* Aumento una parola*/
+    array_parole = realloc(array_parole, wordsCounter * sizeof(char *)); // Aggiungo una stringa all'array di stringhe
+
+    array_parole[wordsCounter - 1] = malloc(WORD_LENGHT); // creo la stringa
+
+    strcpy(array_parole[wordsCounter - 1], punto); // Gli assegno il valore della parola letta
 
     for (int i = 0; i < fileSize; i++)
     {
@@ -156,7 +126,7 @@ aggiornato e conterrà il numero di parole*/
             }
         }
         // printf("%d ", (int)src[i]);
-        if ((int)src[i] == 10 || (int)src[i] == 32) // Viene letto uno spazio o un accapo
+        if ((int)src[i] == 10 || (int)src[i] == 32 || (int)src[i] == 9) // Viene letto uno spazio o un accapo
         {
             if (j != 0) /*è stato letto uno spazio e c'è una parola nel buffer, va salvata la parola e svuotato il buffer*/
             {
@@ -208,12 +178,27 @@ aggiornato e conterrà il numero di parole*/
 
 int main(int argc, char *argv[])
 {
+    if (argc < 3)
+    {
+        printf("Devi passare un file in input ed uno in output!");
+        exit(1);
+    }
 
     int wordsCounter = 0; /* Questa variabile conterrà il numero di parole del file */
 
     char **array_parole = getWordFromFile(argv[1], &wordsCounter); /* Conta le parole del file */
 
-    prettyPrintWords(array_parole, wordsCounter);
-    printf("\nil file contiene %d parole distinte.\n", wordsCounter);
+    initMatrix(wordsCounter);
+    fillMatrixWithWord(argv[1], array_parole, wordsCounter);
+
+    // prettyPrintWords(array_parole, wordsCounter);
+
+    // printf("\nil file contiene %d parole distinte.\n", wordsCounter);
+
+    // printMatrix(wordsCounter);
+
+    // printf("%d", getIdFromArray(array_parole, "cazzo", wordsCounter));
+    printFrequence(array_parole, argv[2]);
+    free(array_parole);
     exit(0);
 }
