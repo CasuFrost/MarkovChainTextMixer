@@ -7,7 +7,7 @@
 // Headers personali
 #include "headers/stringOpertion.h" /* contiene funzioni riguardo il controllo delle stringhe*/
 
-#define MAX_LINE_LENGHT 500
+#define MAX_LINE_LENGHT 100000
 
 typedef struct wordAndFreq /* Questa struttura servirà a contenere le parole successive ad una parola corrente con le relative frequenze*/
 {
@@ -32,11 +32,11 @@ int compito2(char *input, char *output, char *numParole, char start[WORD_LENGHT]
         printf("Inserire un numero di parole valido\n");
         exit(1);
     }
-
-    searchAndWriteWord(fp, atoi(numParole), start, 1, outFile, 0); /*Avvio il procedimento sulla prima parola*/
+    char line[MAX_LINE_LENGHT];                                          /* in questo buffer, inserirò la linea corrente letta dal file */
+    searchAndWriteWord(fp, atoi(numParole), start, 1, outFile, 0, line); /*Avvio il procedimento sulla prima parola*/
 }
 
-void searchAndWriteWord(FILE *fp, int remainingWord, char word[32], int letteraMaiuscola, FILE *outputFile, int wordCount)
+void searchAndWriteWord(FILE *fp, int remainingWord, char word[32], int letteraMaiuscola, FILE *outputFile, int wordCount, char line[MAX_LINE_LENGHT])
 /* Questa funzione si occupa di leggere il file CSV, selezionando la parola corrente, per poi selezionarne una successiva, in base alla frequenza. La funzione
 legge riga per riga il file finché non arriva alla parola corrente, si occupa di scriverla sul file (se seguita da un punto, con la lettera maiuscola) per poi
 selezionarne una successiva ripetendo ricorsivamente il procedimento, finché non scriverà tutte le parole */
@@ -46,7 +46,7 @@ selezionarne una successiva ripetendo ricorsivamente il procedimento, finché no
         return;
     }
 
-    char line[MAX_LINE_LENGHT]; /* in questo buffer, inserirò la linea corrente letta dal file */
+    // char line[MAX_LINE_LENGHT]; /* in questo buffer, inserirò la linea corrente letta dal file */
 
     while (fgets(line, MAX_LINE_LENGHT, fp)) // Leggo il file riga per riga
     {
@@ -110,13 +110,12 @@ selezionarne una successiva ripetendo ricorsivamente il procedimento, finché no
 
             /* Chiamo la ricorsione sulla parola successiva, facendo attenzione a diminuire di 1 il numero di parole
             rimanenti da scrivere! */
-            searchAndWriteWord(fp, remainingWord - 1, successive, capitalize, outputFile, wordCount + 1);
+            searchAndWriteWord(fp, remainingWord - 1, successive, capitalize, outputFile, wordCount + 1, line);
 
             return;
         }
     }
 
-    printf("La parola iniziale che hai inserito, non è presente nel file.\n");
     exit(1);
 }
 
@@ -239,12 +238,14 @@ void findSuccessive(char line[MAX_LINE_LENGHT], char successive[WORD_LENGHT]) /*
     {
         if (random >= nextWords[i].minRange && random <= nextWords[i].maxRange)
         {
+            // printf("--%s--\n", nextWords[i].word);
             strcpy(successive, nextWords[i].word);
             free(nextWords);
             return;
         }
     }
 
+    // printf("\n\nla linea è: \n%s\n la parola selezionata è %s\n\n", line, nextWords[0].word);
     strcpy(successive, nextWords[0].word);
     free(nextWords);
     return;

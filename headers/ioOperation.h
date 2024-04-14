@@ -26,7 +26,7 @@ in byte del file.*/
         exit(1);
     }
 
-    *size = sbuf.st_size + 1; // Le dimensioni del file in input
+    *size = sbuf.st_size; // Le dimensioni del file in input
     if (sbuf.st_size == 0)
     {
         printf("Il file %s passato in input è vuoto!\n", fileName);
@@ -42,15 +42,9 @@ in byte del file.*/
         printf("errore nel mapping del file \n");
         exit(1);
     }
-    char *src2 = malloc(sbuf.st_size + 1);
-    src2[0] = '.';
-    for (int i = 1; i < sbuf.st_size + 1; i++)
-    {
-        src2[i] = src[i - 1];
-    }
 
     close(fdIn);
     /* A questo punto del codice, all'interno del buffer 'src' è presente il file */
-    *size -= 1;
+
     return src;
 }

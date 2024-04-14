@@ -27,6 +27,7 @@ aggiornato e conterrà il numero di parole*/
 
     for (int i = 0; i < fileSize; i++)
     {
+
         if (j > WORD_LENGHT - 1)
         {
             printf("Il testo contiene una parola più lunga di 30 caratteri!\n");
@@ -88,7 +89,7 @@ aggiornato e conterrà il numero di parole*/
             }
         }
 
-        if ((int)src[i] == 10 || (int)src[i] == 32 || (int)src[i] == 9) // Viene letto uno spazio o un accapo
+        if ((int)src[i] >= 0 && (int)src[i] <= 32) // Viene letto uno spazio o un accapo
         {
             if (j != 0) /*è stato letto uno spazio e c'è una parola nel buffer, va salvata la parola e svuotato il buffer*/
             {
@@ -105,8 +106,10 @@ aggiornato e conterrà il numero di parole*/
             tmp[j] = src[i];
             j++;
         }
+        printf("%d\n", i);
     }
 
+    printf("arrivati");
     // FINE DEL CICLO FOR
 
     if (j != 0) /*Se l'ultima lettera è un carattere, la parola nel buffer non è stata ancora aggiunta all'array*/
@@ -124,10 +127,13 @@ aggiornato e conterrà il numero di parole*/
 int compito1(char *input, char *output)
 {
 
-    int wordsCounter = 0; /* Questa variabile conterrà il numero di parole del file */
-
+    int wordsCounter = 0;                                        /* Questa variabile conterrà il numero di parole del file */
     char **array_parole = getWordFromFile(input, &wordsCounter); /* Conta le parole del file */
 
+    FILE *fp;
+    fp = fopen("text.txt", "w+");
+
+    // printf("%d", wordsCounter);
     initMatrix(wordsCounter);                              // Inizializzo la matrice con numero di righe e colonne identico al numero delle parole distinte lette nel file
     fillMatrixWithWord(input, array_parole, wordsCounter); // Riempio i campi della matrice
 

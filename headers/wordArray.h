@@ -12,10 +12,12 @@ un insieme.*/
 void addWord(char ***array_parole, int *counter, char word[WORD_LENGHT]) /* Questa funzione prende in input un array di parole (con la sua
 dimensione) ed una parola, ed aggiunge la parola nell'array (esclusivamente se non vi è già presente), questo array simula quindi un SET*/
 {
+
     int k = *counter;
     minuscolaStringa(word);
     if (!checkIfWordInArray(*array_parole, k, word)) /*Controlla se la parola non è già nell'array*/
     {
+        // printf("parola[%d]=%s\n", *counter, word);
         k++;
         *counter = k;
 
@@ -232,6 +234,7 @@ void printFrequence(char **array_parole, char *fileName) /*Questa funzione legge
         }
         if (i != n - 1)
         {
+
             fprintf(fp, "\n"); // Vado a capo nel file CSV
         }
     }
