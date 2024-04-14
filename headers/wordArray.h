@@ -67,7 +67,7 @@ int punteggiaturaDaScartare(char c)
 {
     if (((int)c >= 34 && (int)c <= 38) || ((int)c >= 40 && (int)c <= 45) ||
         ((int)c >= 58 && (int)c <= 62) || ((int)c >= 91 && (int)c <= 96) ||
-        ((int)c >= 123 && (int)c <= 126))
+        ((int)c >= 123 && (int)c <= 126) || c == '/')
     {
         return 1;
     }
@@ -197,12 +197,12 @@ void fillMatrixWithWord(char *fileName, char **array_parole, int wordsCounter)
         previousId = getWordArrayId(array_parole, wordsCounter, previousWord);
         matrix[previousId * n + currentId]++;
     }
-    if (strcmp(currentWord, ".") != 0)
+    if (strcmp(currentWord, ".") != 0 && wordsCounter >= 2)
     {
         /*Se l'ultima parola non è il punto, bisogna collegare la prima e l'ultima parola per evitare situazioni
         in cui il programma non sa quale altra parola usare*/
 
-        matrix[(wordsCounter - 1) * n + 0]++; // Prima del punto, c'è l'ultima parola
+        matrix[(wordsCounter - 1) * n + 1]++; // Prima del punto, c'è l'ultima parola
     }
 }
 

@@ -30,6 +30,11 @@ aggiornato e conterrà il numero di parole*/
 
     for (int i = 0; i < fileSize; i++)
     {
+        if (j > WORD_LENGHT - 1)
+        {
+            printf("Il testo contiene una parola più lunga di 30 caratteri!\n");
+            exit(1);
+        }
         if (punteggiaturaDaScartare(src[i]))
         {
             // C'è della punteggiatura da scartare

@@ -13,7 +13,7 @@ int compito2(char *input, char *output, char *numParole)
     char *src = putFileInBuffer(input, &fileSize);
     if (atoi(numParole) < 1)
     {
-        printf("inserire numero parole corretto\n");
+        printf("Inserire un numero di parole valido\n");
         exit(1);
     }
 }
