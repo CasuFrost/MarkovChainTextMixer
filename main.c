@@ -19,7 +19,21 @@ int main(int argc, char *argv[])
     }
     else if (strcmp(argv[3], "2") == 0)
     {
-        compito2(argv[2], argv[1], argv[4]);
+        if (argc < 5)
+        {
+            printf("è necessario fornire un numero di parole da generare!\n");
+            exit(1);
+        }
+
+        char punto[WORD_LENGHT] = ".";
+        if (argc < 6)
+        {
+            compito2(argv[2], argv[1], argv[4], punto);
+        }
+        else
+        {
+            compito2(argv[2], argv[1], argv[4], argv[5]);
+        }
     }
     else
     {

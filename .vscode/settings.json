@@ -5,6 +5,9 @@
         "iooperation.h": "c",
         "mman.h": "c",
         "wordarray.h": "c",
-        "compito1.h": "c"
+        "compito1.h": "c",
+        "compito2.h": "c",
+        "fcntl.h": "c",
+        "stdio.h": "c"
     }
 }

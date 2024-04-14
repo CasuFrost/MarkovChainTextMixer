@@ -9,20 +9,20 @@ un insieme.*/
 
 #define WORD_LENGHT 32 /*30 byte per la parola, 1 byte per un eventuale apostrofo, il byte finale per '\0' */
 
-/*La struttura delle frequenze seguirà il seguente schema :
-Ogni parola sarà identificata da una struttura dati 'Nodo Parola', essa conterrà una stringa, relativa alla parola
-stessa, e un insieme di puntatori ad una struttura 'Nodo frequenza'.
-
-Il 'Nodo frequenza' non è altro che una struttura contenente una stringa ed un carattere float.
-
-*/
-void addWordToArray(int *wordsCounter, char **array_parole, char tmp[WORD_LENGHT])
+void addWord(char ***array_parole, int *counter, char word[WORD_LENGHT]) /* Questa funzione prende in input un array di parole (con la sua
+dimensione) ed una parola, ed aggiunge la parola nell'array (esclusivamente se non vi è già presente), questo array simula quindi un SET*/
 {
-    *wordsCounter++;                                                      // Aumento una parola
-    array_parole = realloc(array_parole, *wordsCounter * sizeof(char *)); // Aggiungo una stringa all'array di stringhe
+    int k = *counter;
+    minuscolaStringa(word);
+    if (!checkIfWordInArray(*array_parole, k, word)) /*Controlla se la parola non è già nell'array*/
+    {
+        k++;
+        *counter = k;
 
-    array_parole[*wordsCounter - 1] = malloc(WORD_LENGHT); // creo la stringa
-    strcpy(array_parole[*wordsCounter - 1], tmp);          // Gli assegno il valore della parola letta
+        *array_parole = realloc(*array_parole, k * sizeof(char *));
+        (*array_parole)[k - 1] = malloc(WORD_LENGHT);
+        strcpy((*array_parole)[k - 1], word);
+    }
 }
 
 int *matrix;
@@ -45,7 +45,6 @@ void initMatrix(int words)
 {
     n = words;
     matrix = (int *)malloc(n * n * sizeof(int));
-    matrix[1] = 98;
 
     for (int i = 0; i < n; i++)
     {

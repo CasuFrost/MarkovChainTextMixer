@@ -3,17 +3,249 @@
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <sys/fcntl.h>
-
+#include <time.h>
 // Headers personali
 #include "headers/stringOpertion.h" /* contiene funzioni riguardo il controllo delle stringhe*/
 
-int compito2(char *input, char *output, char *numParole)
+#define MAX_LINE_LENGHT 900
+
+typedef struct wordAndFreq /* Questa struttura servirà a contenere le parole successive ad una parola corrente con le relative frequenze*/
 {
-    int fileSize;
-    char *src = putFileInBuffer(input, &fileSize);
+    char word[WORD_LENGHT];
+    float freq;
+    float minRange;
+    float maxRange;
+} wordAndFreq;
+
+int compito2(char *input, char *output, char *numParole, char start[WORD_LENGHT])
+{
+    srand(time(NULL));
+
+    FILE *fp;
+    fp = fopen(input, "r"); /*Apro il file di input*/
+
+    FILE *outFile;
+    outFile = fopen(output, "w+"); /*Apro il file di output*/
+
     if (atoi(numParole) < 1)
     {
         printf("Inserire un numero di parole valido\n");
         exit(1);
     }
+
+    searchAndWriteWord(fp, atoi(numParole), start, 1, outFile, 0); /*Avvio il procedimento sulla prima parola*/
+}
+
+void searchAndWriteWord(FILE *fp, int remainingWord, char word[32], int letteraMaiuscola, FILE *outputFile, int wordCount)
+/* Questa funzione si occupa di leggere il file CSV, selezionando la parola corrente, per poi selezionarne una successiva, in base alla frequenza. La funzione
+legge riga per riga il file finché non arriva alla parola corrente, si occupa di scriverla sul file (se seguita da un punto, con la lettera maiuscola) per poi
+selezionarne una successiva ripetendo ricorsivamente il procedimento, finché non scriverà tutte le parole */
+{
+    if (remainingWord == 0) /* Il numero di parole scritte è stato raggiunto, la funzione può terminare la ricorsione */
+    {
+        return;
+    }
+
+    char line[MAX_LINE_LENGHT]; /* in questo buffer, inserirò la linea corrente letta dal file */
+
+    while (fgets(line, MAX_LINE_LENGHT, fp)) // Leggo il file riga per riga
+    {
+        char tmp[WORD_LENGHT]; // Controllo la prima parola in questione
+
+        for (int i = 0; i < strlen(line); i++) // Seleziono la prima parola della linea
+        {
+            if (line[i] == ',')
+            {
+                tmp[i] = '\0';
+                break;
+            }
+            tmp[i] = line[i];
+        }
+
+        if (strcmp(tmp, word) == 0) /* Se la linea letta è relativa alla parola in questione, si avvia il procedimento di selezione della
+        successiva, altrimenti leggo la prossima linea*/
+        {
+
+            // Scrivo la parola sul file
+
+            if (letteraMaiuscola) /* Questa variabile determina se la parola è o non è all'inizio di una frase, in caso affermativo, la sua
+            lettera iniziale deve essere maiuscola */
+            {
+
+                if ((int)word[0] < 123 && (int)word[0] > 96) /* Mi accerto che sia una parola con lettere e non un punto*/
+                {
+                    char copy[32];
+                    strcpy(copy, word);
+                    char c = copy[0];
+                    int a = (int)c;
+                    a -= 32;
+                    copy[0] = (char)a;
+
+                    fprintf(outputFile, "%s ", copy);
+                }
+            }
+            else
+            {
+                fprintf(outputFile, "%s ", word);
+            }
+
+            if (wordCount % 15 == 0 && wordCount != 0) /* Quando sul file vengono scritte 15 parole, si va a capo*/
+            {
+                fprintf(outputFile, "\n");
+            }
+
+            char successive[WORD_LENGHT];     /* Definisco la variabile in cui andrà il successivo*/
+            findSuccessive(line, successive); /* Seleziono la parola successiva randomicamente */
+
+            /* La funzione inserirà dentro la variabile 'successive' la parola successiva */
+
+            fseek(fp, 0, SEEK_SET); /* Torno all'inizio del file */
+
+            int capitalize = 0;
+            if (strcmp(word, ".") == 0 || strcmp(word, "!") == 0 || strcmp(word, "?") == 0)
+            {
+                /* Se la parola attuale è un punto, la prossima avrà la iniziale maiuscola */
+                capitalize = 1;
+            }
+
+            /* Chiamo la ricorsione sulla parola successiva, facendo attenzione a diminuire di 1 il numero di parole
+            rimanenti da scrivere! */
+            searchAndWriteWord(fp, remainingWord - 1, successive, capitalize, outputFile, wordCount + 1);
+
+            return;
+        }
+    }
+
+    printf("La parola iniziale che hai inserito, non è presente nel file.\n");
+    exit(1);
+}
+
+void findSuccessive(char line[MAX_LINE_LENGHT], char successive[WORD_LENGHT]) /* Prende in input una linea del file CSV, e seleziona un successivo fra le parole che
+ seguono la parola corrente*/
+{
+
+    wordAndFreq *nextWords = malloc(0); /* Questo array conterrà tutte le parole candidate ad essere le successive, con le relative frequenze */
+    int nextWordsSize = 0;              /* Il numero di parole successive a quella corrente */
+
+    char tmp[WORD_LENGHT];
+    int j = 0; /*L'index relativo del buffer che conterrà la parola letta*/
+    int firstWord = 0;
+
+    for (int i = 0; i < strlen(line); i++)
+    {
+        if ((int)line[i] == 10 || (int)line[i] == 32 || (int)line[i] == 9) // Viene letto uno spazio o un accapo
+        {
+            continue;
+        }
+
+        if (line[i] == ',') // Leggo una virgola, ciò che c'è nel buffer sarà una parola
+        {
+            if (firstWord == 0) /* La prima parola letta è quella corrente e va ignorata*/
+            {
+                j = 0;
+                firstWord++;
+                continue;
+            }
+
+            else
+            {
+                tmp[j] = '\0'; /* Termino la stringa 'tmp' */
+                j = 0;
+
+                /* A questo punto ho letto una parola candidata ad essere successiva */
+
+                i++;
+                char freq[WORD_LENGHT];
+
+                while ((line[i] != ',' && i < strlen(line))) /* Leggo il valore della frequenza */
+                {
+                    freq[j] = line[i];
+                    j++;
+                    i++;
+                }
+
+                freq[j] = '\0';
+
+                float frequenza = atof(freq); /* La stringa che contiene la frequenza viene letta come float all'interno di una variabil */
+
+                if (frequenza == 1.) /* Se la frequenza di una parola è 1, non sono necessari altri controlli, sarà la successiva al 100% */
+                {
+                    strcpy(successive, tmp);
+                    return;
+                }
+
+                /*Inserisco la parola letta con relativa frequenza all'interno dell'array*/
+                nextWordsSize++;
+
+                nextWords = realloc(nextWords, nextWordsSize * (sizeof(wordAndFreq)));
+
+                wordAndFreq new;
+
+                strcpy(new.word, tmp);
+                new.freq = frequenza;
+
+                nextWords[nextWordsSize - 1] = new;
+
+                // printf("parola: %s freq : %f\n", tmp, frequenza);
+
+                j = 0;
+                continue;
+            }
+        }
+
+        tmp[j] = line[i];
+        j++;
+    }
+
+    /* A questo punto del file ho dentro l'array 'nextWords' tutte le parole candidate ad essere
+    la successiva*/
+
+    /* Ad ogni parola sarà associato un intervallo di float, la parola 0-esima avrà intervallo da 0 alla sua frequenza,
+    la parola i-esima avrà intervallo dall'estremo destro dell'intervallo della parola
+    i-1 esima a lo stesso valore + la sua frequenza
+
+    ESEMPIO
+
+    parola : cane    frequenza : 0.25
+    parola : ladro    frequenza : 0.5
+    parola : sai    frequenza : 0.25
+
+    range di cane sarà  : [0,0.25]
+    range di ladro sarà : [0.25,0.75]
+    range di sai sarà   : [0.75,1]
+
+
+    */
+
+    float tot = 0;
+
+    for (int i = 0; i < nextWordsSize; i++) /* Assegno i range*/
+    {
+        nextWords[i].minRange = tot;
+        nextWords[i].maxRange = tot + nextWords[i].freq;
+        if (nextWords[i].maxRange >= 0.99)
+        {
+            nextWords[i].maxRange = 1;
+        }
+        tot += nextWords[i].freq;
+    }
+
+    float random = (float)rand() / (float)RAND_MAX; /* Simulo una variabile aleatoria continua uniforme in [0,1] */
+
+    /* Se la parola i ha range [a,b], la probabilità che i sia scelta come successiva è uguale all'integrale definito fra a ed b
+    della funzione di densità di 'random' */
+
+    for (int i = 0; i < nextWordsSize; i++) /* Controllo a quale parola è associato l'intervallo in cui rientra il numero generato casualmente*/
+    {
+        if (random >= nextWords[i].minRange && random <= nextWords[i].maxRange)
+        {
+            strcpy(successive, nextWords[i].word);
+            free(nextWords);
+            return;
+        }
+    }
+
+    strcpy(successive, nextWords[0].word);
+    free(nextWords);
+    return;
 }
