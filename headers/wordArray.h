@@ -17,7 +17,7 @@ dimensione) ed una parola, ed aggiunge la parola nell'array (esclusivamente se n
     minuscolaStringa(word);
     if (!checkIfWordInArray(*array_parole, k, word)) /*Controlla se la parola non è già nell'array*/
     {
-        // printf("parola[%d]=%s\n", *counter, word);
+        printf("parola[%d]=%s\n", *counter, word);
         k++;
         *counter = k;
 

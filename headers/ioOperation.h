@@ -27,6 +27,7 @@ in byte del file.*/
     }
 
     *size = sbuf.st_size; // Le dimensioni del file in input
+
     if (sbuf.st_size == 0)
     {
         printf("Il file %s passato in input è vuoto!\n", fileName);
