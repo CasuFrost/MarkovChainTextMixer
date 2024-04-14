@@ -140,8 +140,6 @@ int compito1(char *input, char *output)
     int wordsCounter = 0;                                        /* Questa variabile conterrà il numero di parole del file */
     char **array_parole = getWordFromFile(input, &wordsCounter); /* Conta le parole del file */
     // printf("%d", wordsCounter);
-    FILE *fp;
-    fp = fopen("text.txt", "w+");
 
     // printf("%d", wordsCounter);
     initMatrix(wordsCounter);                              // Inizializzo la matrice con numero di righe e colonne identico al numero delle parole distinte lette nel file
