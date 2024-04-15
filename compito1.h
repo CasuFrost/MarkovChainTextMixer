@@ -15,7 +15,7 @@ aggiornato e conterrà il numero di parole*/
     int fileSize;
     char tmp[WORD_LENGHT];
 
-    FILE *fp = fopen(fileName, "r");
+    FILE *fp = fopen(fileName, "r+");
 
     if (fp == NULL)
     {
@@ -36,12 +36,10 @@ aggiornato e conterrà il numero di parole*/
 
     while ((c = fgetc(fp)) != EOF)
     {
-        if ((int)c > 128 || (int)c < 0)
-        {
-        }
+
         if (j > WORD_LENGHT - 1)
         {
-            printf("Il testo contiene una parola più lunga di 30 caratteri!\n");
+            printf("Il testo contiene una parola più lunga di 30 caratteri, oppure contiene una parola, in cui \nè presente un carattere non ASCII standard!\n");
             exit(1);
         }
 
@@ -100,7 +98,7 @@ aggiornato e conterrà il numero di parole*/
             }
         }
 
-        if ((int)c >= 0 && (int)c <= 32) // Viene letto uno spazio o un accapo
+        if (((int)c >= 0 && (int)c <= 32) || c > 127 || c < 0) // Viene letto uno spazio o un accapo
         {
             if (j != 0) /*è stato letto uno spazio e c'è una parola nel buffer, va salvata la parola e svuotato il buffer*/
             {
@@ -139,10 +137,9 @@ int compito1(char *input, char *output)
 
     int wordsCounter = 0;                                        /* Questa variabile conterrà il numero di parole del file */
     char **array_parole = getWordFromFile(input, &wordsCounter); /* Conta le parole del file */
-    // printf("%d", wordsCounter);
 
-    // printf("%d", wordsCounter);
-    initMatrix(wordsCounter);                              // Inizializzo la matrice con numero di righe e colonne identico al numero delle parole distinte lette nel file
+    initMatrix(wordsCounter); // Inizializzo la matrice con numero di righe e colonne identico al numero delle parole distinte lette nel file
+
     fillMatrixWithWord(input, array_parole, wordsCounter); // Riempio i campi della matrice
 
     printFrequence(array_parole, output); // Scrivo il file

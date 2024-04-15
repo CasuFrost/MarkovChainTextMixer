@@ -24,6 +24,8 @@ int compito2(char *input, char *output, char *numParole, char start[WORD_LENGHT]
     FILE *fp;
     fp = fopen(input, "r"); /*Apro il file di input*/
 
+    // char *src = putFileInBuffer(input, &fileSize);
+
     FILE *outFile;
     outFile = fopen(output, "w+"); /*Apro il file di output*/
 
@@ -34,6 +36,7 @@ int compito2(char *input, char *output, char *numParole, char start[WORD_LENGHT]
     }
     char line[MAX_LINE_LENGHT];                                          /* in questo buffer, inserirò la linea corrente letta dal file */
     searchAndWriteWord(fp, atoi(numParole), start, 1, outFile, 0, line); /*Avvio il procedimento sulla prima parola*/
+    printf("Programma andato a buon fine!\n");
 }
 
 void searchAndWriteWord(FILE *fp, int remainingWord, char word[32], int letteraMaiuscola, FILE *outputFile, int wordCount, char line[MAX_LINE_LENGHT])
@@ -50,6 +53,7 @@ selezionarne una successiva ripetendo ricorsivamente il procedimento, finché no
 
     while (fgets(line, MAX_LINE_LENGHT, fp)) // Leggo il file riga per riga
     {
+
         char tmp[WORD_LENGHT]; // Controllo la prima parola in questione
 
         for (int i = 0; i < strlen(line); i++) // Seleziono la prima parola della linea
@@ -89,7 +93,7 @@ selezionarne una successiva ripetendo ricorsivamente il procedimento, finché no
                 fprintf(outputFile, "%s ", word);
             }
 
-            if (wordCount % 15 == 0 && wordCount != 0) /* Quando sul file vengono scritte 15 parole, si va a capo*/
+            if (wordCount % 25 == 0 && wordCount != 0) /* Quando sul file vengono scritte 15 parole, si va a capo*/
             {
                 fprintf(outputFile, "\n");
             }
@@ -229,13 +233,17 @@ void findSuccessive(char line[MAX_LINE_LENGHT], char successive[WORD_LENGHT]) /*
         tot += nextWords[i].freq;
     }
 
+    nextWords[nextWordsSize - 1].maxRange = 1.;
+
     float random = (float)rand() / (float)RAND_MAX; /* Simulo una variabile aleatoria continua uniforme in [0,1] */
 
     /* Se la parola i ha range [a,b], la probabilità che i sia scelta come successiva è uguale all'integrale definito fra a ed b
     della funzione di densità di 'random' */
 
+    int i = 0;
     for (int i = 0; i < nextWordsSize; i++) /* Controllo a quale parola è associato l'intervallo in cui rientra il numero generato casualmente*/
     {
+
         if (random >= nextWords[i].minRange && random <= nextWords[i].maxRange)
         {
             // printf("--%s--\n", nextWords[i].word);
@@ -244,7 +252,7 @@ void findSuccessive(char line[MAX_LINE_LENGHT], char successive[WORD_LENGHT]) /*
             return;
         }
     }
-
+    printf("fuori dal range con %f\n, il limite destro è %f", random, nextWords[nextWordsSize - 1].maxRange);
     // printf("\n\nla linea è: \n%s\n la parola selezionata è %s\n\n", line, nextWords[0].word);
     strcpy(successive, nextWords[0].word);
     free(nextWords);

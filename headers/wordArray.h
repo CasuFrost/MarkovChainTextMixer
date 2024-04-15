@@ -17,7 +17,7 @@ dimensione) ed una parola, ed aggiunge la parola nell'array (esclusivamente se n
     minuscolaStringa(word);
     if (!checkIfWordInArray(*array_parole, k, word)) /*Controlla se la parola non è già nell'array*/
     {
-        printf("parola[%d]=%s\n", *counter, word);
+        // printf("parola[%d]=%s\n", *counter, word);
         k++;
         *counter = k;
 
@@ -165,7 +165,7 @@ void fillMatrixWithWord(char *fileName, char **array_parole, int wordsCounter)
             }
         }
         // printf("%d ", (int)src[i]);
-        if ((int)src[i] == 10 || (int)src[i] == 32 || (int)src[i] == 9) // Viene letto uno spazio o un accapo
+        if (((int)src[i] >= 0 && (int)src[i] <= 32) || src[i] > 127 || src[i] < 0) // Viene letto uno spazio o un accapo
         {
             if (j != 0) /*è stato letto uno spazio e c'è una parola nel buffer, va salvata la parola e svuotato il buffer*/
             {
