@@ -7,7 +7,7 @@
 // Headers personali
 #include "headers/stringOpertion.h" /* contiene funzioni riguardo il controllo delle stringhe*/
 
-#define MAX_LINE_LENGHT 100000
+#define MAX_LINE_LENGHT 150000
 
 typedef struct wordAndFreq /* Questa struttura servirà a contenere le parole successive ad una parola corrente con le relative frequenze*/
 {

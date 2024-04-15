@@ -1,3 +1,4 @@
-CORREGGERE COMPITO 1
+OTTIMIZZA COMPITO 1 
 
-- La divina commedia causa un segmentation fault, e ancora non so il perché!
+Rendi il processo di lettura parole e creazione matrice un unica operzione, 
+creando e modificando la matrice dinamicamente
