@@ -10,6 +10,9 @@ un insieme.*/
 
 #define WORD_LENGHT 62 /*30 byte per la parola, 1 byte per un eventuale apostrofo, il byte finale per '\0' */
 
+int *matrix;
+int n;
+
 void addWord(char ***array_parole, int *counter, char word[WORD_LENGHT]) /* Questa funzione prende in input un array di parole (con la sua
 dimensione) ed una parola, ed aggiunge la parola nell'array (esclusivamente se non vi è già presente), questo array simula quindi un SET*/
 {
@@ -18,18 +21,21 @@ dimensione) ed una parola, ed aggiunge la parola nell'array (esclusivamente se n
     minuscolaStringa(word);
     if (!checkIfWordInArray(*array_parole, k, word)) /*Controlla se la parola non è già nell'array*/
     {
-        // printf("parola[%d]=%s\n", *counter, word);
+        // Aggiungi all'array delle parole
         k++;
         *counter = k;
 
         *array_parole = realloc(*array_parole, k * sizeof(char *));
         (*array_parole)[k - 1] = malloc(WORD_LENGHT);
         strcpy((*array_parole)[k - 1], word);
+
+        // Aggiungi una riga alla matrice inizializzandola a zero
+    }
+    else
+    {
+        // Aggiorna il valore della matrice
     }
 }
-
-int *matrix;
-int n;
 
 void printMatrix(int wordsCounter)
 {
@@ -199,6 +205,7 @@ void fillMatrixWithWord(char *fileName, char **array_parole, int wordsCounter)
         previousId = getWordArrayId(array_parole, wordsCounter, previousWord);
         matrix[previousId * n + currentId]++;
     }
+
     if (strcmp(currentWord, ".") != 0 && wordsCounter >= 2)
     {
         /*Se l'ultima parola non è il punto, bisogna collegare la prima e l'ultima parola per evitare situazioni
