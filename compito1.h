@@ -99,8 +99,7 @@ aggiornato e conterrà il numero di parole*/
                 continue;
             }
         }
-
-        if (((int)src[i] >= 0 && (int)src[i] <= 32) || src[i] > 127 || src[i] < 0) // Viene letto uno spazio o un accapo
+        if (((int)src[i] >= 0 && (int)src[i] <= 32)) // Viene letto uno spazio o un accapo
         {
             if (j != 0) /*è stato letto uno spazio e c'è una parola nel buffer, va salvata la parola e svuotato il buffer*/
             {

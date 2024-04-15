@@ -8,7 +8,7 @@ un insieme.*/
 
 #include "ioOperation.h"
 
-#define WORD_LENGHT 32 /*30 byte per la parola, 1 byte per un eventuale apostrofo, il byte finale per '\0' */
+#define WORD_LENGHT 62 /*30 byte per la parola, 1 byte per un eventuale apostrofo, il byte finale per '\0' */
 
 void addWord(char ***array_parole, int *counter, char word[WORD_LENGHT]) /* Questa funzione prende in input un array di parole (con la sua
 dimensione) ed una parola, ed aggiunge la parola nell'array (esclusivamente se non vi è già presente), questo array simula quindi un SET*/
@@ -166,7 +166,7 @@ void fillMatrixWithWord(char *fileName, char **array_parole, int wordsCounter)
             }
         }
         // printf("%d ", (int)src[i]);
-        if (((int)src[i] >= 0 && (int)src[i] <= 32) || src[i] > 127 || src[i] < 0) // Viene letto uno spazio o un accapo
+        if (((int)src[i] >= 0 && (int)src[i] <= 32)) // Viene letto uno spazio o un accapo
         {
             if (j != 0) /*è stato letto uno spazio e c'è una parola nel buffer, va salvata la parola e svuotato il buffer*/
             {
