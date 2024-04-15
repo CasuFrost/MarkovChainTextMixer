@@ -21,10 +21,11 @@ int compito2(char *input, char *output, char *numParole, char start[WORD_LENGHT]
 {
     srand(time(NULL));
 
+    int fileSize;
+    // src = putFileInBuffer(input, &fileSize);
+
     FILE *fp;
     fp = fopen(input, "r"); /*Apro il file di input*/
-
-    // char *src = putFileInBuffer(input, &fileSize);
 
     FILE *outFile;
     outFile = fopen(output, "w+"); /*Apro il file di output*/
