@@ -19,6 +19,9 @@ typedef struct wordAndFreq /* Questa struttura servirà a contenere le parole su
 
 int compito2(char *input, char *output, char *numParole, char start[WORD_LENGHT])
 {
+    clock_t startTime, end;
+    startTime = clock();
+    double cpu_time_used;
     srand(time(NULL));
 
     int fileSize;
@@ -37,7 +40,9 @@ int compito2(char *input, char *output, char *numParole, char start[WORD_LENGHT]
     }
     char line[MAX_LINE_LENGHT];                                          /* in questo buffer, inserirò la linea corrente letta dal file */
     searchAndWriteWord(fp, atoi(numParole), start, 1, outFile, 0, line); /*Avvio il procedimento sulla prima parola*/
-    printf("Programma andato a buon fine!\n");
+    end = clock();
+    cpu_time_used = ((double)(end - startTime)) / CLOCKS_PER_SEC;
+    printf("Programma andato a buon fine in %.2f secondi!\n", cpu_time_used);
 }
 
 void searchAndWriteWord(FILE *fp, int remainingWord, char word[32], int letteraMaiuscola, FILE *outputFile, int wordCount, char line[MAX_LINE_LENGHT])

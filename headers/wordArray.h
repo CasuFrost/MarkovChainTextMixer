@@ -180,6 +180,12 @@ void fillMatrixWithWord(char *fileName, char **array_parole, int wordsCounter)
 
     for (int i = 0; i < fileSize; i++)
     {
+        if (j > WORD_LENGHT - 1)
+        {
+            // printf("Il testo contiene una parola più lunga di 30 caratteri, oppure contiene una parola, in cui \nè presente un carattere non ASCII standard!\n");
+            j = 0;
+            continue;
+        }
         if (punteggiaturaDaScartare(src[i]))
         {
             // C'è della punteggiatura da scartare

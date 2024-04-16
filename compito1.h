@@ -41,8 +41,9 @@ aggiornato e conterrà il numero di parole*/
 
         if (j > WORD_LENGHT - 1)
         {
-            printf("Il testo contiene una parola più lunga di 30 caratteri, oppure contiene una parola, in cui \nè presente un carattere non ASCII standard!\n");
-            exit(1);
+            printf("Il testo contiene una parola più lunga di 30 caratteri, oppure contiene una parola, in cui \nè presente un carattere non ASCII standard, tale parola è stata tagliata!\n");
+            j = 0;
+            continue;
         }
 
         if (punteggiaturaDaScartare(src[i]))
@@ -152,6 +153,6 @@ int compito1(char *input, char *output)
     free(array_parole);
     end = clock();
     cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
-    printf("programma andato a buon fine in %.2f secondi!\n", cpu_time_used);
+    printf("Programma andato a buon fine in %.2f secondi!\n", cpu_time_used);
     exit(0);
 }
