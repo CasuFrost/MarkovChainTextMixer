@@ -1,2 +1,2 @@
 ALL:
-	gcc main.c -w -o singleProcess.out
+	gcc main.c  -w -o singleProcess.out

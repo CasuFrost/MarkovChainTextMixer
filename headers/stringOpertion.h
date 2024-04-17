@@ -2,6 +2,7 @@
 #include <stdio.h>
 
 #include "wordArray.h"
+
 /*Questo file contiene alcune funzioni sul controllo e la modifica delle stringhe o dei caratteri*/
 
 void minuscolaStringa(char *s)

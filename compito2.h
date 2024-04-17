@@ -125,7 +125,7 @@ selezionarne una successiva ripetendo ricorsivamente il procedimento, finché no
             return;
         }
     }
-
+    printf("La parola inserita non è presente nel testo!\n");
     exit(1);
 }
 

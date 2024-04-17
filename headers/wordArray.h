@@ -2,13 +2,8 @@
 Il termine array, è in realtà improprio, in quanto tale struttura sarà
 un insieme.*/
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-
 #include "ioOperation.h"
-
-#define WORD_LENGHT 62 /*30 byte per la parola, 1 byte per un eventuale apostrofo, il byte finale per '\0' */
+#include "graph.h"
 
 int *matrix;
 int n;
@@ -17,7 +12,6 @@ int **int2dArray;
 
 int **realloc2dIntArray(int **ipp, int n, int m)
 {
-
     ipp = (int **)realloc(ipp, n * sizeof(int *));
 
     for (int i = n - 1; i < n; i++)
