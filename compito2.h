@@ -7,8 +7,6 @@
 // Headers personali
 #include "headers/stringOpertion.h" /* contiene funzioni riguardo il controllo delle stringhe*/
 
-#define MAX_LINE_LENGHT 150000
-
 typedef struct wordAndFreq /* Questa struttura servirà a contenere le parole successive ad una parola corrente con le relative frequenze*/
 {
     char word[WORD_LENGHT];
@@ -22,7 +20,26 @@ int compito2(char *input, char *output, char *numParole, char start[WORD_LENGHT]
     clock_t startTime, end;
     startTime = clock();
     double cpu_time_used;
-    srand(time(NULL));
+
+    if (atoi(numParole) > 400) // Compito nuovo
+    {
+        if (atoi(numParole) < 1)
+        {
+            printf("Inserire un numero di parole valido\n");
+            exit(1);
+        }
+        srand(time(NULL));
+
+        /* PER LA VECCHIA VERSIONE, CANCELLARE LE SEGUENTI 3 RIGHE*/
+        createGraphFromFile(input);
+        writeOnFile(output, atoi(numParole), start);
+
+        end = clock();
+        cpu_time_used = ((double)(end - startTime)) / CLOCKS_PER_SEC;
+        printf("\nProgramma andato a buon fine, sono state scritte %s parole in %.2f secondi!\n\n", numParole, cpu_time_used);
+
+        exit(0);
+    }
 
     int fileSize;
     // src = putFileInBuffer(input, &fileSize);
@@ -33,11 +50,6 @@ int compito2(char *input, char *output, char *numParole, char start[WORD_LENGHT]
     FILE *outFile;
     outFile = fopen(output, "w+"); /*Apro il file di output*/
 
-    if (atoi(numParole) < 1)
-    {
-        printf("Inserire un numero di parole valido\n");
-        exit(1);
-    }
     char line[MAX_LINE_LENGHT];                                          /* in questo buffer, inserirò la linea corrente letta dal file */
     searchAndWriteWord(fp, atoi(numParole), start, 1, outFile, 0, line); /*Avvio il procedimento sulla prima parola*/
     end = clock();

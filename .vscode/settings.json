@@ -9,6 +9,7 @@
         "compito2.h": "c",
         "fcntl.h": "c",
         "stdio.h": "c",
-        "graph.h": "c"
+        "graph.h": "c",
+        "time.h": "c"
     }
 }
