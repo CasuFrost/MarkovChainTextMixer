@@ -13,17 +13,38 @@ struct Node
 {
     char word[WORD_LENGHT];
     int nearSize;
+    int nodeId;
     struct Edge *edges;
 };
 
 struct Edge
 {
     struct Node *node;
+
     float weight;
 };
 
 int nodesSize = 0;
 struct Node *nodes;
+
+void addNearId(int nodeFrom, int nodeTo, float w)
+{
+    nodes[nodeFrom].nearSize++;
+    if (nodes[nodeFrom].nearSize == 1)
+    {
+        nodes[nodeFrom].edges = calloc(1, (sizeof(struct Edge)));
+    }
+    else
+    {
+        nodes[nodeFrom].edges = realloc(nodes[nodeFrom].edges, nodes[nodeFrom].nearSize * (sizeof(struct Edge)));
+    }
+
+    struct Edge e = {nodeTo, w};
+    e.node = nodeTo;
+    e.weight = w;
+
+    nodes[nodeFrom].edges[nodes[nodeFrom].nearSize - 1] = e;
+}
 
 void addNear(struct Node *nodeFrom, struct Node *nodeTo, float w)
 {
@@ -39,6 +60,7 @@ void addNear(struct Node *nodeFrom, struct Node *nodeTo, float w)
 
     struct Edge e = {nodeTo, w};
     e.node = nodeTo;
+
     e.weight = w;
 
     nodeFrom->edges[nodeFrom->nearSize - 1] = e;
@@ -68,6 +90,7 @@ void createNode(char word[WORD_LENGHT])
     struct Node newNode;
     strcpy(newNode.word, word);
     newNode.nearSize = 0;
+    newNode.nodeId = nodesSize;
 
     if (nodesSize == 0)
     {
@@ -100,9 +123,9 @@ int searchIdFromWord(char word[WORD_LENGHT])
     return -1;
 }
 
-void createEdgeFromWord(char word1[WORD_LENGHT], char word2[WORD_LENGHT], float w)
+void createEdgeFromWord(int id1, char word2[WORD_LENGHT], float w)
 {
-    int id1 = searchIdFromWord(word1);
+
     int id2 = searchIdFromWord(word2);
 
     if (id1 == -1 || id2 == -1)
@@ -114,6 +137,7 @@ void createEdgeFromWord(char word1[WORD_LENGHT], char word2[WORD_LENGHT], float 
 
 void createGraphFromFile(char *fileName)
 {
+    int wordCounter = 0;
     FILE *fp;
     fp = fopen(fileName, "r"); /*Apro il file di input*/
     char line[MAX_LINE_LENGHT];
@@ -171,7 +195,7 @@ void createGraphFromFile(char *fileName)
         int j = 0;
 
         // Tutti gli archi partiranno da 'nodeTo'
-
+        // printf("%d\n", nodes[searchIdFromWord(nodeTo)].nodeId == wordCounter);
         while (i < strlen(line))
         {
             if (line[i] == ',')
@@ -186,10 +210,11 @@ void createGraphFromFile(char *fileName)
                     i++;
                     j++;
                 }
+
                 freq[j] = '\0';
                 j = 0;
 
-                createEdgeFromWord(nodeTo, tmp, atof(freq));
+                createEdgeFromWord(wordCounter, tmp, atof(freq));
                 // printf("%s %s\n", tmp, freq);
             }
             else
@@ -200,15 +225,15 @@ void createGraphFromFile(char *fileName)
             }
             i++;
         }
+        wordCounter++;
     }
 }
 
-int selectNearId(char word[WORD_LENGHT])
+int selectNearId(int id)
 {
-    int id = searchIdFromWord(word);
     if (id == -1)
     {
-        printf("parola nel grafo non trovata : %s", word);
+        printf("parola nel grafo non trovata : %s", nodes[id].word);
         exit(1);
         return;
     }
@@ -221,20 +246,42 @@ int selectNearId(char word[WORD_LENGHT])
     {
         if ((random >= prev) && (random <= prev + (nodes[id]).edges[j].weight))
         {
-            return searchIdFromWord((nodes[id]).edges[j].node->word);
+            return (nodes[id]).edges[j].node->nodeId;
         }
         prev += (nodes[id]).edges[j].weight;
     }
 
-    return searchIdFromWord((nodes[id]).edges[k - 1].node->word);
+    return (nodes[id]).edges[k - 1].node->nodeId;
 }
 
-void writeOnFile(char *fileName, int words, char start[WORD_LENGHT])
+void writeOnFile(char *fileName, int words, char start[WORD_LENGHT]) /*Questa funzione legge il grafo contenente le parole e le frequenze, ed eseguendo una passeggiata
+sul grafo, scrive il contenuto sul file*/
 {
     FILE *fp;
-    fp = fopen(fileName, "w+"); /*Apro il file di input*/
-    int k = words;
-    int id = selectNearId(start);
+    fp = fopen(fileName, "w+"); /*Apro il file di output*/
+
+    if (fp == NULL)
+    {
+        printf("Errore nell'apertura dei file.");
+        exit(1);
+    }
+
+    int firstWord = 0; /* Questa variabile serve esclusivamente ad indicare quando o no andare a capo*/
+
+    if (searchIdFromWord(start) == -1) /* Se il punto di partenza non è presente, si parte dal punto */
+    {
+        if ((strcmp(start, "!") == 0) || (strcmp(start, "?") == 0))
+        {
+            strcpy(start, ".");
+        }
+        else
+        {
+            printf("La parola che hai inserito, non è presente nel testo!");
+            exit(1);
+        }
+    }
+
+    int id = selectNearId(searchIdFromWord(start));
 
     int maiusc = 1;
     char tmp[WORD_LENGHT];
@@ -253,32 +300,31 @@ void writeOnFile(char *fileName, int words, char start[WORD_LENGHT])
 
         fprintf(fp, "%s ", tmp);
 
-        id = selectNearId(nodes[id].word);
+        id = selectNearId(id);
+
         if (strcmp(tmp, ".") == 0 || strcmp(tmp, "!") == 0 || strcmp(tmp, "?") == 0)
         {
             /* Se la parola attuale è un punto, la prossima avrà la iniziale maiuscola */
             maiusc = 1;
         }
-        if (words % 20 == 0 && words != k)
+        if (words % 20 == 0 && firstWord == 1)
         {
             fprintf(fp, "\n");
         }
+        firstWord = 1;
         words--;
     }
 
+    freeGraphStructures();
     fclose(fp);
 }
 
-void testGraph()
+void freeGraphStructures()
 {
-    createNode("ciao");
-    createNode("cane");
-    createNode("pisello");
+    for (int i = 0; i < nodesSize; i++)
+    {
+        free(nodes[i].edges);
+    }
 
-    createEdge(&nodes[0], &nodes[1], 0.5);
-    createEdge(&nodes[2], &nodes[0], 0.5);
-
-    // printf("parola : %s\n", (nodes[1]).edges[0].node->word);
-    printGraph();
-    exit(0);
+    free(nodes);
 }

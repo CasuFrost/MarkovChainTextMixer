@@ -20,6 +20,7 @@ int compito2(char *input, char *output, char *numParole, char start[WORD_LENGHT]
     clock_t startTime, end;
     startTime = clock();
     double cpu_time_used;
+    srand(time(NULL));
 
     if (atoi(numParole) > 400) // Compito nuovo
     {
@@ -28,7 +29,26 @@ int compito2(char *input, char *output, char *numParole, char start[WORD_LENGHT]
             printf("Inserire un numero di parole valido\n");
             exit(1);
         }
-        srand(time(NULL));
+
+        /*Generazione di un punto di partenza casuale*/
+        if (strcmp(start, ".") == 0)
+        {
+
+            int r = rand() % 3;
+
+            switch (r)
+            {
+            case 0:
+                strcpy(start, ".");
+                break;
+            case 1:
+                strcpy(start, "!");
+                break;
+            case 2:
+                strcpy(start, "?");
+                break;
+            }
+        }
 
         /* PER LA VECCHIA VERSIONE, CANCELLARE LE SEGUENTI 3 RIGHE*/
         createGraphFromFile(input);
@@ -50,8 +70,18 @@ int compito2(char *input, char *output, char *numParole, char start[WORD_LENGHT]
     FILE *outFile;
     outFile = fopen(output, "w+"); /*Apro il file di output*/
 
-    char line[MAX_LINE_LENGHT];                                          /* in questo buffer, inserirò la linea corrente letta dal file */
-    searchAndWriteWord(fp, atoi(numParole), start, 1, outFile, 0, line); /*Avvio il procedimento sulla prima parola*/
+    if (outFile == NULL || fp == NULL)
+    {
+        printf("Errore nell'apertura dei file.");
+        exit(1);
+    }
+
+    char line[MAX_LINE_LENGHT];                                              /* in questo buffer, inserirò la linea corrente letta dal file */
+    searchAndWriteWord(fp, atoi(numParole) + 1, start, 1, outFile, 0, line); /*Avvio il procedimento sulla prima parola*/
+
+    fclose(fp);
+    fclose(outFile);
+
     end = clock();
     cpu_time_used = ((double)(end - startTime)) / CLOCKS_PER_SEC;
     printf("Programma andato a buon fine in %.2f secondi!\n", cpu_time_used);

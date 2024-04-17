@@ -40,3 +40,7 @@ int main(int argc, char *argv[])
     {
     }
 }
+
+int randomStart(char *input) /* Questa funzione seleziona un punto casuale dalla quale partire fra '?',  '.'  e '!' */
+{
+}
