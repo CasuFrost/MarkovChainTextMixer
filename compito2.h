@@ -50,19 +50,18 @@ int compito2(char *input, char *output, char *numParole, char start[WORD_LENGHT]
             }
         }
 
-        /* PER LA VECCHIA VERSIONE, CANCELLARE LE SEGUENTI 3 RIGHE*/
-        createGraphFromFile(input);
-        writeOnFile(output, atoi(numParole), start);
+        createGraphFromFile(input);                  /* Leggo il file di input e preparo la struttura del grafo */
+        writeOnFile(output, atoi(numParole), start); /* Con una passeggiata sul grafo, scrivo sul file di output */
 
         end = clock();
         cpu_time_used = ((double)(end - startTime)) / CLOCKS_PER_SEC;
+
         printf("\nProgramma andato a buon fine, sono state scritte %s parole in %.4f secondi!\n\n", numParole, cpu_time_used);
 
         exit(0);
     }
 
     int fileSize;
-    // src = putFileInBuffer(input, &fileSize);
 
     FILE *fp;
     fp = fopen(input, "r"); /*Apro il file di input*/

@@ -39,6 +39,12 @@ void addNearId(int nodeFrom, int nodeTo, float w)
         nodes[nodeFrom].edges = realloc(nodes[nodeFrom].edges, nodes[nodeFrom].nearSize * (sizeof(struct Edge)));
     }
 
+    if (nodes[nodeFrom].edges == NULL)
+    {
+        printf("errore nell'allocazione della memoria\n");
+        exit(1);
+    }
+
     struct Edge e = {nodeTo, w};
     e.node = nodeTo;
     e.weight = w;
@@ -56,6 +62,12 @@ void addNear(struct Node *nodeFrom, struct Node *nodeTo, float w)
     else
     {
         nodeFrom->edges = realloc(nodeFrom->edges, nodeFrom->nearSize * (sizeof(struct Edge)));
+    }
+
+    if (nodeFrom->edges == NULL)
+    {
+        printf("errore nell'allocazione della memoria\n");
+        exit(1);
     }
 
     struct Edge e = {nodeTo, w};
@@ -103,7 +115,7 @@ void createNode(char word[WORD_LENGHT])
 
     if (nodes == NULL)
     {
-        printf("errore sulla malloc\n");
+        printf("errore nell'allocazione della memoria\n");
         exit(1);
     }
 
@@ -111,7 +123,7 @@ void createNode(char word[WORD_LENGHT])
     nodesSize++;
 }
 
-int searchIdFromWord(char word[WORD_LENGHT])
+int searchIdFromWord(char word[WORD_LENGHT]) /* Questa funzione  data una parola restituisce l'ID (la posizione nell'array) del nodo con quella parola*/
 {
     for (int i = 0; i < nodesSize; i++)
     {
@@ -195,7 +207,7 @@ void createGraphFromFile(char *fileName)
         int j = 0;
 
         // Tutti gli archi partiranno da 'nodeTo'
-        // printf("%d\n", nodes[searchIdFromWord(nodeTo)].nodeId == wordCounter);
+
         while (i < strlen(line))
         {
             if (line[i] == ',')
@@ -215,7 +227,6 @@ void createGraphFromFile(char *fileName)
                 j = 0;
 
                 createEdgeFromWord(wordCounter, tmp, atof(freq));
-                // printf("%s %s\n", tmp, freq);
             }
             else
             {
@@ -229,7 +240,7 @@ void createGraphFromFile(char *fileName)
     }
 }
 
-int selectNearId(int id)
+int selectNearId(int id) /* dato un nodo del grafo, seleziona il prossimo nodo in maniera casuale in base ai pesi sui grafi */
 {
     if (id == -1)
     {
@@ -251,7 +262,7 @@ int selectNearId(int id)
         prev += (nodes[id]).edges[j].weight;
     }
 
-    return (nodes[id]).edges[k - 1].node->nodeId;
+    return (nodes[id]).edges[k - 1].node->nodeId; /* Dati gli errori di approssimazione, la somma di tutte le frequenze potrebbe essere minore di 1 */
 }
 
 void writeOnFile(char *fileName, int words, char start[WORD_LENGHT]) /*Questa funzione legge il grafo contenente le parole e le frequenze, ed eseguendo una passeggiata
@@ -285,11 +296,12 @@ sul grafo, scrive il contenuto sul file*/
 
     int maiusc = 1;
     char tmp[WORD_LENGHT];
+
     while (words > 0)
     {
         strcpy(tmp, nodes[id].word);
 
-        if (maiusc == 1)
+        if (maiusc == 1) /* Controllo se la parola deve avere la prima lettera maiuscola */
         {
             if (tmp[0] > 96 && tmp[0] < 123)
             {
@@ -298,24 +310,26 @@ sul grafo, scrive il contenuto sul file*/
             maiusc = 0;
         }
 
-        fprintf(fp, "%s ", tmp);
+        fprintf(fp, "%s ", tmp); /* Scrivo sul file la parola ed uno spazio */
 
-        id = selectNearId(id);
+        id = selectNearId(id); /* Seleziono la prossima parola tramite uno dei nodi adiacenti al nodo attuale */
 
         if (strcmp(tmp, ".") == 0 || strcmp(tmp, "!") == 0 || strcmp(tmp, "?") == 0)
         {
             /* Se la parola attuale è un punto, la prossima avrà la iniziale maiuscola */
             maiusc = 1;
         }
-        if (words % 20 == 0 && firstWord == 1)
+
+        if (words % 20 == 0 && firstWord == 1) /* Ogni 20 parole, vado a capo */
         {
             fprintf(fp, "\n");
         }
+
         firstWord = 1;
         words--;
     }
 
-    freeGraphStructures();
+    freeGraphStructures(); /* Libero le strutture del grafo che ho allocato */
     fclose(fp);
 }
 
