@@ -4,7 +4,7 @@
 #include <sys/stat.h>
 #include <sys/fcntl.h>
 
-#include "compito1.h"
+#include "../headers/rootHeader.h"
 
 int main(int argc, char *argv[])
 {

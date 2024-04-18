@@ -1,4 +1,0 @@
-OTTIMIZZA COMPITO 1 
-
-Rendi il processo di lettura parole e creazione matrice un unica operzione, 
-creando e modificando la matrice dinamicamente

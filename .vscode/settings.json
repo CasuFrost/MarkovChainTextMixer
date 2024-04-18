@@ -10,6 +10,9 @@
         "fcntl.h": "c",
         "stdio.h": "c",
         "graph.h": "c",
-        "time.h": "c"
+        "time.h": "c",
+        "errno.h": "c",
+        "stat.h": "c",
+        "rootheader.h": "c"
     }
 }

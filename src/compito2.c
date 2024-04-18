@@ -1,11 +1,5 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <sys/mman.h>
-#include <sys/stat.h>
-#include <sys/fcntl.h>
-#include <time.h>
 // Headers personali
-#include "headers/stringOpertion.h" /* contiene funzioni riguardo il controllo delle stringhe*/
+#include "../headers/graph.h"
 
 typedef struct wordAndFreq /* Questa struttura servirà a contenere le parole successive ad una parola corrente con le relative frequenze*/
 {

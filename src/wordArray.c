@@ -1,9 +1,7 @@
 /* Questo file si occupa di gestire un array di parole di lunghezza massima 30 byte.
 Il termine array, è in realtà improprio, in quanto tale struttura sarà
 un insieme.*/
-
-#include "ioOperation.h"
-#include "graph.h"
+#include "../headers/ioOperation.h"
 
 int *matrix;
 int n;

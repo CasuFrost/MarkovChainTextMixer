@@ -1,11 +1,6 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <sys/mman.h>
-#include <sys/stat.h>
-#include <sys/fcntl.h>
-#include <time.h>
 // Headers personali
-#include "compito2.h"
+#include "../headers/stringOpertion.h" /* contiene funzioni riguardo il controllo delle stringhe*/
+#include "wordArray.c"
 
 char **getWordFromFile(char *fileName, int *numberOfWords) /* Questa funzione prende come input il nome di un file, e restituisce
 un array di stringhe contenete le parole lette nel file.  prende come input anche un intero, che verrà
