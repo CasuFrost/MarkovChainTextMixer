@@ -1,4 +1,5 @@
 #include "../headers/rootHeader.h"
+#include "../headers/ioOperation.h"
 
 char *putFileInBuffer(char *fileName, int *size)
 { /*Questa funzione prende come input il path di un file, e restituisce un puntatore di caratteri contenente

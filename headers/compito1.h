@@ -1,0 +1,1 @@
+int compito1(char *input, char *output);

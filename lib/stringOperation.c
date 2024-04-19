@@ -1,4 +1,5 @@
 #include "../headers/rootHeader.h"
+#include "../headers/stringOpertion.h"
 
 /*Questo file contiene alcune funzioni sul controllo e la modifica delle stringhe o dei caratteri*/
 

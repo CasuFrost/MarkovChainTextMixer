@@ -1,12 +1,12 @@
 CC := gcc
 
-ALL: singleProcess clean
+ALL: singleProcess 
 
-singleProcess : src/stringOperation.o src/graph.o src/main.o src/ioOperation.o src/compito1.o src/compito2.o src/stringOperation.o
-	$(CC) $^ -o $@ -w
+singleProcess : lib/ioOperation.o lib/stringOperation.o src/graph.o  src/compito1.o src/compito2.o src/main.o
+	$(CC) $^ -o $@  
 
 %.o : %.c
-	$(CC) $(CFLAGS) -c $< -o $@ -w
+	$(CC) $(CFLAGS) -c $< -o $@ 
 
 clean:
 	rm -f src/*.o

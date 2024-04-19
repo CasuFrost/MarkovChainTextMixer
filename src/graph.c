@@ -1,4 +1,5 @@
 #include "../headers/rootHeader.h"
+#include "../headers/graph.h"
 
 struct Node
 {
@@ -11,7 +12,6 @@ struct Node
 struct Edge
 {
     struct Node *node;
-
     float weight;
 };
 
@@ -36,9 +36,7 @@ void addNearId(int nodeFrom, int nodeTo, float w)
         exit(1);
     }
 
-    struct Edge e = {nodeTo, w};
-    e.node = nodeTo;
-    e.weight = w;
+    struct Edge e = {&(nodes[nodeTo]), w};
 
     nodes[nodeFrom].edges[nodes[nodeFrom].nearSize - 1] = e;
 }
@@ -237,7 +235,6 @@ int selectNearId(int id) /* dato un nodo del grafo, seleziona il prossimo nodo i
     {
         printf("parola nel grafo non trovata : %s", nodes[id].word);
         exit(1);
-        return;
     }
 
     float random = (float)rand() / (float)RAND_MAX; /* Simulo una variabile aleatoria continua uniforme in [0,1] */
@@ -330,6 +327,5 @@ void freeGraphStructures()
     {
         free(nodes[i].edges);
     }
-
     free(nodes);
 }

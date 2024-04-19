@@ -1,5 +1,6 @@
 // Headers personali
 #include "../headers/graph.h"
+#include "../headers/compito2.h"
 
 typedef struct wordAndFreq /* Questa struttura servirà a contenere le parole successive ad una parola corrente con le relative frequenze*/
 {
@@ -8,161 +9,6 @@ typedef struct wordAndFreq /* Questa struttura servirà a contenere le parole su
     float minRange;
     float maxRange;
 } wordAndFreq;
-
-int compito2(char *input, char *output, char *numParole, char start[WORD_LENGHT])
-{
-    clock_t startTime, end;
-    startTime = clock();
-    double cpu_time_used;
-    srand(time(NULL));
-
-    if (atoi(numParole) > 400) // Compito nuovo
-    {
-        if (atoi(numParole) < 1)
-        {
-            printf("Inserire un numero di parole valido\n");
-            exit(1);
-        }
-
-        /*Generazione di un punto di partenza casuale*/
-        if (strcmp(start, ".") == 0)
-        {
-
-            int r = rand() % 3;
-
-            switch (r)
-            {
-            case 0:
-                strcpy(start, ".");
-                break;
-            case 1:
-                strcpy(start, "!");
-                break;
-            case 2:
-                strcpy(start, "?");
-                break;
-            }
-        }
-
-        createGraphFromFile(input);                  /* Leggo il file di input e preparo la struttura del grafo */
-        writeOnFile(output, atoi(numParole), start); /* Con una passeggiata sul grafo, scrivo sul file di output */
-
-        end = clock();
-        cpu_time_used = ((double)(end - startTime)) / CLOCKS_PER_SEC;
-
-        printf("\nProgramma andato a buon fine, sono state scritte %s parole in %.4f secondi!\n\n", numParole, cpu_time_used);
-
-        exit(0);
-    }
-
-    int fileSize;
-
-    FILE *fp;
-    fp = fopen(input, "r"); /*Apro il file di input*/
-
-    FILE *outFile;
-    outFile = fopen(output, "w+"); /*Apro il file di output*/
-
-    if (outFile == NULL || fp == NULL)
-    {
-        printf("Errore nell'apertura dei file.");
-        exit(1);
-    }
-
-    char line[MAX_LINE_LENGHT];                                              /* in questo buffer, inserirò la linea corrente letta dal file */
-    searchAndWriteWord(fp, atoi(numParole) + 1, start, 1, outFile, 0, line); /*Avvio il procedimento sulla prima parola*/
-
-    fclose(fp);
-    fclose(outFile);
-
-    end = clock();
-    cpu_time_used = ((double)(end - startTime)) / CLOCKS_PER_SEC;
-    printf("Programma andato a buon fine in %.2f secondi!\n", cpu_time_used);
-}
-
-void searchAndWriteWord(FILE *fp, int remainingWord, char word[32], int letteraMaiuscola, FILE *outputFile, int wordCount, char line[MAX_LINE_LENGHT])
-/* Questa funzione si occupa di leggere il file CSV, selezionando la parola corrente, per poi selezionarne una successiva, in base alla frequenza. La funzione
-legge riga per riga il file finché non arriva alla parola corrente, si occupa di scriverla sul file (se seguita da un punto, con la lettera maiuscola) per poi
-selezionarne una successiva ripetendo ricorsivamente il procedimento, finché non scriverà tutte le parole */
-{
-    if (remainingWord == 0) /* Il numero di parole scritte è stato raggiunto, la funzione può terminare la ricorsione */
-    {
-        return;
-    }
-
-    // char line[MAX_LINE_LENGHT]; /* in questo buffer, inserirò la linea corrente letta dal file */
-
-    while (fgets(line, MAX_LINE_LENGHT, fp)) // Leggo il file riga per riga
-    {
-
-        char tmp[WORD_LENGHT]; // Controllo la prima parola in questione
-
-        for (int i = 0; i < strlen(line); i++) // Seleziono la prima parola della linea
-        {
-            if (line[i] == ',')
-            {
-                tmp[i] = '\0';
-                break;
-            }
-            tmp[i] = line[i];
-        }
-
-        if (strcmp(tmp, word) == 0) /* Se la linea letta è relativa alla parola in questione, si avvia il procedimento di selezione della
-        successiva, altrimenti leggo la prossima linea*/
-        {
-
-            // Scrivo la parola sul file
-
-            if (letteraMaiuscola) /* Questa variabile determina se la parola è o non è all'inizio di una frase, in caso affermativo, la sua
-            lettera iniziale deve essere maiuscola */
-            {
-
-                if ((int)word[0] < 123 && (int)word[0] > 96) /* Mi accerto che sia una parola con lettere e non un punto*/
-                {
-                    char copy[32];
-                    strcpy(copy, word);
-                    char c = copy[0];
-                    int a = (int)c;
-                    a -= 32;
-                    copy[0] = (char)a;
-
-                    fprintf(outputFile, "%s ", copy);
-                }
-            }
-            else
-            {
-                fprintf(outputFile, "%s ", word);
-            }
-
-            if (wordCount % 25 == 0 && wordCount != 0) /* Quando sul file vengono scritte 15 parole, si va a capo*/
-            {
-                fprintf(outputFile, "\n");
-            }
-
-            char successive[WORD_LENGHT];     /* Definisco la variabile in cui andrà il successivo*/
-            findSuccessive(line, successive); /* Seleziono la parola successiva randomicamente */
-
-            /* La funzione inserirà dentro la variabile 'successive' la parola successiva */
-
-            fseek(fp, 0, SEEK_SET); /* Torno all'inizio del file */
-
-            int capitalize = 0;
-            if (strcmp(word, ".") == 0 || strcmp(word, "!") == 0 || strcmp(word, "?") == 0)
-            {
-                /* Se la parola attuale è un punto, la prossima avrà la iniziale maiuscola */
-                capitalize = 1;
-            }
-
-            /* Chiamo la ricorsione sulla parola successiva, facendo attenzione a diminuire di 1 il numero di parole
-            rimanenti da scrivere! */
-            searchAndWriteWord(fp, remainingWord - 1, successive, capitalize, outputFile, wordCount + 1, line);
-
-            return;
-        }
-    }
-    printf("La parola inserita non è presente nel testo!\n");
-    exit(1);
-}
 
 void findSuccessive(char line[MAX_LINE_LENGHT], char successive[WORD_LENGHT]) /* Prende in input una linea del file CSV, e seleziona un successivo fra le parole che
  seguono la parola corrente*/
@@ -298,4 +144,159 @@ void findSuccessive(char line[MAX_LINE_LENGHT], char successive[WORD_LENGHT]) /*
     strcpy(successive, nextWords[0].word);
     free(nextWords);
     return;
+}
+
+void searchAndWriteWord(FILE *fp, int remainingWord, char word[32], int letteraMaiuscola, FILE *outputFile, int wordCount, char line[MAX_LINE_LENGHT])
+/* Questa funzione si occupa di leggere il file CSV, selezionando la parola corrente, per poi selezionarne una successiva, in base alla frequenza. La funzione
+legge riga per riga il file finché non arriva alla parola corrente, si occupa di scriverla sul file (se seguita da un punto, con la lettera maiuscola) per poi
+selezionarne una successiva ripetendo ricorsivamente il procedimento, finché non scriverà tutte le parole */
+{
+    if (remainingWord == 0) /* Il numero di parole scritte è stato raggiunto, la funzione può terminare la ricorsione */
+    {
+        return;
+    }
+
+    // char line[MAX_LINE_LENGHT]; /* in questo buffer, inserirò la linea corrente letta dal file */
+
+    while (fgets(line, MAX_LINE_LENGHT, fp)) // Leggo il file riga per riga
+    {
+
+        char tmp[WORD_LENGHT]; // Controllo la prima parola in questione
+
+        for (int i = 0; i < strlen(line); i++) // Seleziono la prima parola della linea
+        {
+            if (line[i] == ',')
+            {
+                tmp[i] = '\0';
+                break;
+            }
+            tmp[i] = line[i];
+        }
+
+        if (strcmp(tmp, word) == 0) /* Se la linea letta è relativa alla parola in questione, si avvia il procedimento di selezione della
+        successiva, altrimenti leggo la prossima linea*/
+        {
+
+            // Scrivo la parola sul file
+
+            if (letteraMaiuscola) /* Questa variabile determina se la parola è o non è all'inizio di una frase, in caso affermativo, la sua
+            lettera iniziale deve essere maiuscola */
+            {
+
+                if ((int)word[0] < 123 && (int)word[0] > 96) /* Mi accerto che sia una parola con lettere e non un punto*/
+                {
+                    char copy[32];
+                    strcpy(copy, word);
+                    char c = copy[0];
+                    int a = (int)c;
+                    a -= 32;
+                    copy[0] = (char)a;
+
+                    fprintf(outputFile, "%s ", copy);
+                }
+            }
+            else
+            {
+                fprintf(outputFile, "%s ", word);
+            }
+
+            if (wordCount % 25 == 0 && wordCount != 0) /* Quando sul file vengono scritte 15 parole, si va a capo*/
+            {
+                fprintf(outputFile, "\n");
+            }
+
+            char successive[WORD_LENGHT];     /* Definisco la variabile in cui andrà il successivo*/
+            findSuccessive(line, successive); /* Seleziono la parola successiva randomicamente */
+
+            /* La funzione inserirà dentro la variabile 'successive' la parola successiva */
+
+            fseek(fp, 0, SEEK_SET); /* Torno all'inizio del file */
+
+            int capitalize = 0;
+            if (strcmp(word, ".") == 0 || strcmp(word, "!") == 0 || strcmp(word, "?") == 0)
+            {
+                /* Se la parola attuale è un punto, la prossima avrà la iniziale maiuscola */
+                capitalize = 1;
+            }
+
+            /* Chiamo la ricorsione sulla parola successiva, facendo attenzione a diminuire di 1 il numero di parole
+            rimanenti da scrivere! */
+            searchAndWriteWord(fp, remainingWord - 1, successive, capitalize, outputFile, wordCount + 1, line);
+
+            return;
+        }
+    }
+    printf("La parola inserita non è presente nel testo!\n");
+    exit(1);
+}
+
+int compito2(char *input, char *output, char *numParole, char start[WORD_LENGHT])
+{
+    clock_t startTime, end;
+    startTime = clock();
+    double cpu_time_used;
+    srand(time(NULL));
+
+    if (atoi(numParole) > 400) // Compito nuovo
+    {
+        if (atoi(numParole) < 1)
+        {
+            printf("Inserire un numero di parole valido\n");
+            exit(1);
+        }
+
+        /*Generazione di un punto di partenza casuale*/
+        if (strcmp(start, ".") == 0)
+        {
+
+            int r = rand() % 3;
+
+            switch (r)
+            {
+            case 0:
+                strcpy(start, ".");
+                break;
+            case 1:
+                strcpy(start, "!");
+                break;
+            case 2:
+                strcpy(start, "?");
+                break;
+            }
+        }
+
+        createGraphFromFile(input);                  /* Leggo il file di input e preparo la struttura del grafo */
+        writeOnFile(output, atoi(numParole), start); /* Con una passeggiata sul grafo, scrivo sul file di output */
+
+        end = clock();
+        cpu_time_used = ((double)(end - startTime)) / CLOCKS_PER_SEC;
+
+        printf("\nProgramma andato a buon fine, sono state scritte %s parole in %.4f secondi!\n\n", numParole, cpu_time_used);
+
+        exit(0);
+    }
+
+    int fileSize;
+
+    FILE *fp;
+    fp = fopen(input, "r"); /*Apro il file di input*/
+
+    FILE *outFile;
+    outFile = fopen(output, "w+"); /*Apro il file di output*/
+
+    if (outFile == NULL || fp == NULL)
+    {
+        printf("Errore nell'apertura dei file.");
+        exit(1);
+    }
+
+    char line[MAX_LINE_LENGHT];                                              /* in questo buffer, inserirò la linea corrente letta dal file */
+    searchAndWriteWord(fp, atoi(numParole) + 1, start, 1, outFile, 0, line); /*Avvio il procedimento sulla prima parola*/
+
+    fclose(fp);
+    fclose(outFile);
+
+    end = clock();
+    cpu_time_used = ((double)(end - startTime)) / CLOCKS_PER_SEC;
+    printf("Programma andato a buon fine in %.2f secondi!\n", cpu_time_used);
 }

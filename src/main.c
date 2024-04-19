@@ -5,6 +5,8 @@
 #include <sys/fcntl.h>
 
 #include "../headers/rootHeader.h"
+#include "../headers/compito2.h"
+#include "../headers/compito1.h"
 
 int main(int argc, char *argv[])
 {
