@@ -241,6 +241,7 @@ int selectNearId(int id) /* dato un nodo del grafo, seleziona il prossimo nodo i
 
     float prev = 0;
     int k = nodes[id].nearSize;
+
     for (int j = 0; j < k; j++)
     {
         if ((random >= prev) && (random <= prev + (nodes[id]).edges[j].weight))

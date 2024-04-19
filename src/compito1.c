@@ -11,14 +11,6 @@ aggiornato e conterrà il numero di parole*/
     int fileSize;
     char tmp[WORD_LENGHT];
 
-    // FILE *fp = fopen(fileName, "r+");
-
-    /*if (fp == NULL)
-    {
-        printf("file %s non esistente\n", fileName);
-        exit(1);
-    }*/
-
     char *src = putFileInBuffer(fileName, &fileSize);
 
     int j = 0; /* Sarà l'index relativo della parola letta, se 0, vuol dire che si sta attendendo di leggere la prima lettera di una parola*/
@@ -147,6 +139,7 @@ int compito1(char *input, char *output)
     // Libero la memoria
     free(matrix);
     free(array_parole);
+
     end = clock();
     cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
     printf("Programma andato a buon fine in %.2f secondi!\n", cpu_time_used);

@@ -2,7 +2,7 @@ CC := gcc
 
 ALL: singleProcess 
 
-singleProcess : lib/ioOperation.o lib/stringOperation.o src/graph.o  src/compito1.o src/compito2.o src/main.o
+singleProcess : lib/ioOperation.o lib/stringOperation.o src/graph.o  src/compito1.o src/compito2.o src/main.o 
 	$(CC) $^ -o $@  
 
 %.o : %.c

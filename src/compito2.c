@@ -230,20 +230,23 @@ selezionarne una successiva ripetendo ricorsivamente il procedimento, finché no
     exit(1);
 }
 
-int compito2(char *input, char *output, char *numParole, char start[WORD_LENGHT])
+int compito2(char *input, char *output, char *numParole, char start[WORD_LENGHT]) /* Esistono due versioni del programma, la prima, opera direttamente sul file (efficente per creare poche
+ parole), la seconda, crea un grafo pesato leggendo il CSV, e poi opera sul grafo, l'operazione di creazione del grafo è dispendiosa, ma poi sarà rapido scrivere sul file di output,
+ per questo se le parole son poche verrà effettuato il processo con la prima versione, se invece son tante, verrà creato il grafo.*/
 {
     clock_t startTime, end;
     startTime = clock();
     double cpu_time_used;
     srand(time(NULL));
 
+    if (atoi(numParole) < 1)
+    {
+        printf("Inserire un numero di parole valido\n");
+        exit(1);
+    }
+
     if (atoi(numParole) > 400) // Compito nuovo
     {
-        if (atoi(numParole) < 1)
-        {
-            printf("Inserire un numero di parole valido\n");
-            exit(1);
-        }
 
         /*Generazione di un punto di partenza casuale*/
         if (strcmp(start, ".") == 0)
@@ -276,8 +279,7 @@ int compito2(char *input, char *output, char *numParole, char start[WORD_LENGHT]
         exit(0);
     }
 
-    int fileSize;
-
+    /* Versione 1 del programma (senza grafo) */
     FILE *fp;
     fp = fopen(input, "r"); /*Apro il file di input*/
 
@@ -290,7 +292,8 @@ int compito2(char *input, char *output, char *numParole, char start[WORD_LENGHT]
         exit(1);
     }
 
-    char line[MAX_LINE_LENGHT];                                              /* in questo buffer, inserirò la linea corrente letta dal file */
+    char line[MAX_LINE_LENGHT]; /* in questo buffer, inserirò la linea corrente letta dal file */
+
     searchAndWriteWord(fp, atoi(numParole) + 1, start, 1, outFile, 0, line); /*Avvio il procedimento sulla prima parola*/
 
     fclose(fp);
@@ -298,5 +301,5 @@ int compito2(char *input, char *output, char *numParole, char start[WORD_LENGHT]
 
     end = clock();
     cpu_time_used = ((double)(end - startTime)) / CLOCKS_PER_SEC;
-    printf("Programma andato a buon fine in %.2f secondi!\n", cpu_time_used);
+    printf("Programma andato a buon fine in %.3f secondi!\n", cpu_time_used);
 }
