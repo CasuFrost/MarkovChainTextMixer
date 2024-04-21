@@ -1,7 +1,7 @@
 // Headers personali
 #include "../headers/stringOpertion.h" /* contiene funzioni riguardo il controllo delle stringhe*/
 #include "../headers/compito1.h"
-#include "../lib/wordArray.c"
+#include "../headers/wordArray.h"
 
 char **getWordFromFile(char *fileName, int *numberOfWords) /* Questa funzione prende come input il nome di un file, e restituisce
 un array di stringhe contenete le parole lette nel file.  prende come input anche un intero, che verrà
@@ -137,7 +137,7 @@ int compito1(char *input, char *output)
     printFrequence(array_parole, output); // Scrivo il file
 
     // Libero la memoria
-    free(matrix);
+    freeMatrix();
     free(array_parole);
 
     end = clock();

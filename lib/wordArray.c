@@ -1,10 +1,16 @@
 /* Questo file si occupa di gestire un array di parole di lunghezza massima 30 byte.
 Il termine array, è in realtà improprio, in quanto tale struttura sarà
 un insieme.*/
+#include "../headers/wordArray.h"
 #include "../headers/ioOperation.h"
 
 int *matrix;
 int n;
+
+void freeMatrix()
+{
+    free(matrix);
+}
 
 int **realloc2dIntArray(int **ipp, int n, int m)
 {

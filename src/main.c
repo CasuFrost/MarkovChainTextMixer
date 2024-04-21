@@ -1,25 +1,67 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <sys/mman.h>
-#include <sys/stat.h>
-#include <sys/fcntl.h>
 
 #include "../headers/rootHeader.h"
 #include "../headers/compito2.h"
 #include "../headers/compito1.h"
 
+void testMatrice2d(int n)
+{
+
+    int **array;
+
+    array = malloc(sizeof(int *) * n);
+
+    for (int i = 0; i < n; i++)
+    {
+        array[i] = malloc(sizeof(int) * n);
+    }
+
+    array[0][1] = 4;
+    array[1][1] = 3;
+    array[0][0] = 9;
+    array[1][0] = 2;
+    array[4][5] = 99;
+
+    printM(array, n);
+    printf("\n");
+
+    array = realloc(array, sizeof(int *) * (n + 1));
+    for (int i = 0; i < n; i++)
+    {
+        array[i] = realloc(array[i], sizeof(int) * (n + 1));
+    }
+    array[n] = calloc((n + 1), sizeof(int));
+
+    printM(array, n + 1);
+    exit(0);
+}
+
+void printM(int **array, int n)
+{
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < n; j++)
+        {
+            printf("%d  ", array[i][j]);
+        }
+        printf("\n");
+    }
+}
+
 int main(int argc, char *argv[])
 {
-    // testGraph();
+    // testMatrice2d(6);
+    //  testGraph();
     if (argc < 4) // è necessario passare almeno un file in input ed uno in output
     {
-        printf("è necessario fornire un file input, un file output,\n e specificare se si vuole eseguire il compito 1 o 2\n");
+        printf("è necessario fornire un file input, un file output,\nbisogna anche specificare se si vuole eseguire il compito 1 o 2.\n");
         exit(1);
     }
+
     if (strcmp(argv[3], "1") == 0)
     {
         compito1(argv[1], argv[2]);
     }
+
     else if (strcmp(argv[3], "2") == 0)
     {
         if (argc < 5)
@@ -40,6 +82,8 @@ int main(int argc, char *argv[])
     }
     else
     {
+        printf("Bisogna indicare se eseguire il compito 1 oppure il compito 2.\nIl codice %s non è valido per nessun compito.", argv[3]);
+        exit(1);
     }
 }
 
