@@ -275,7 +275,7 @@ void fillMatrixWithWord(char *fileName, char **array_parole, int wordsCounter)
         matrix[previousId * n + currentId]++;
     }
 
-    if (strcmp(currentWord, ".") != 0 && wordsCounter >= 2)
+    if ((strcmp(currentWord, ".") != 0 || strcmp(currentWord, "!") != 0 || strcmp(currentWord, "?") != 0) && wordsCounter >= 2)
     {
         /*Se l'ultima parola non è il punto, bisogna collegare la prima e l'ultima parola per evitare situazioni
         in cui il programma non sa quale altra parola usare*/

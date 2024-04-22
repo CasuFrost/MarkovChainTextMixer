@@ -2,7 +2,7 @@
 #include "../headers/rootHeader.h"
 #include "../headers/compito2.h"
 #include "../headers/compito1.h"
-
+void printMatrice(int **array, int n);
 void testMatrice2d(int n)
 {
 
@@ -21,7 +21,7 @@ void testMatrice2d(int n)
     array[1][0] = 2;
     array[4][5] = 99;
 
-    printM(array, n);
+    printMatrice(array, n);
     printf("\n");
 
     array = realloc(array, sizeof(int *) * (n + 1));
@@ -31,11 +31,11 @@ void testMatrice2d(int n)
     }
     array[n] = calloc((n + 1), sizeof(int));
 
-    printM(array, n + 1);
+    printMatrice(array, n + 1);
     exit(0);
 }
 
-void printM(int **array, int n)
+void printMatrice(int **array, int n)
 {
     for (int i = 0; i < n; i++)
     {

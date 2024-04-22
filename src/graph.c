@@ -262,7 +262,7 @@ sul grafo, scrive il contenuto sul file*/
 
     if (fp == NULL)
     {
-        printf("Errore nell'apertura dei file.");
+        printf("Errore nell'apertura dei file.\n");
         exit(1);
     }
 
@@ -276,7 +276,7 @@ sul grafo, scrive il contenuto sul file*/
         }
         else
         {
-            printf("La parola che hai inserito, non è presente nel testo!");
+            printf("La parola che hai inserito, non è presente nel testo!\n");
             exit(1);
         }
     }
