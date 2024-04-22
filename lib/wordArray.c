@@ -90,7 +90,7 @@ void printMatrix(int wordsCounter, int f)
             }
             else
             {
-                printf("| %d |", matrix[i * wordsCounter + j]);
+                printf("%d  ", matrix[i * wordsCounter + j]);
             }
         }
         if (f)

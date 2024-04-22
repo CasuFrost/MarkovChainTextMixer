@@ -2,6 +2,7 @@
 #include "../headers/stringOpertion.h" /* contiene funzioni riguardo il controllo delle stringhe*/
 #include "../headers/compito1.h"
 #include "../headers/wordArray.h"
+#include "NEWcompito1.c"
 
 char **getWordFromFile(char *fileName, int *numberOfWords) /* Questa funzione prende come input il nome di un file, e restituisce
 un array di stringhe contenete le parole lette nel file.  prende come input anche un intero, che verrà
@@ -124,6 +125,8 @@ aggiornato e conterrà il numero di parole*/
 
 int compito1(char *input, char *output)
 {
+    // c1(input, output);
+    // printf("\n");
     clock_t start, end;
     start = clock();
     double cpu_time_used;
@@ -133,6 +136,7 @@ int compito1(char *input, char *output)
 
     initMatrix(wordsCounter);                              // Inizializzo la matrice con numero di righe e colonne identico al numero delle parole distinte lette nel file
     fillMatrixWithWord(input, array_parole, wordsCounter); // Riempio i campi della matrice
+    // printMatrix(wordsCounter, 0);
 
     printFrequence(array_parole, output); // Scrivo il file
 
