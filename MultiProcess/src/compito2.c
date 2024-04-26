@@ -234,21 +234,32 @@ void compito2(char *input, char *output, char *numParole, char start[WORD_LENGHT
 {
 
     int Input_Graph_Pipe[2];
+    int nextStep_Pipe[2];
+    int endPipe[2];
 
-    pid_t pid = fork();
+    pid_t pid;
 
-    pipe(Input_Graph_Pipe);
+    pipe(Input_Graph_Pipe); // Questa pipe verrà utilizzata per i dati
+    pipe(nextStep_Pipe);    // Questa pipe verrà per coordinare figlio e padre
+    pipe(endPipe);          // Questa pipe verrà utilizzata per decretare la fine della lettura
 
-    if (pid == 0)
+    if ((pid = fork()) == -1)
     {
-        // FIGLIO
-        // close(Input_Graph_Pipe[0]);
+        printf("errore nel fork");
+        exit(1);
+    }
+
+    if (pid != 0)
+    {
+        // Figlio
+        char readbuffer[80];
+
+        close(Input_Graph_Pipe[0]);
+
+        int wordCounter = 0;
         FILE *fp;
         fp = fopen(input, "r"); /*Apro il file di input*/
         char line[MAX_LINE_LENGHT];
-
-        /* Nel primo ciclo while creo tutti i nodi*/
-
         while (fgets(line, MAX_LINE_LENGHT, fp)) // Leggo il file riga per riga
         {
 
@@ -267,27 +278,40 @@ void compito2(char *input, char *output, char *numParole, char start[WORD_LENGHT
                 i++;
             }
 
-            // printf("sending... %s\n", tmp);
+            // 'tmp' contiene la prima parola
             write(Input_Graph_Pipe[1], tmp, (strlen(tmp) + 1));
-            // exit(0);
-        }
+            write(endPipe[1], "aaa", 3);
 
-        close(fp);
-        exit(0);
+            read(nextStep_Pipe[0], readbuffer, sizeof(readbuffer)); // Il figlio attende l'ordine del padre per la prossima parola
+        }
+        write(endPipe[1], "end", 3);
+
+        // A questo punto del codice, il padre ha letto tutte le parole distinte nel file CSV, e le ha inviate al figlio
     }
     else
     {
-        int returnStatus;
-        // waitpid(pid, &returnStatus, 0);
-        //  close(Input_Graph_Pipe[1]);
+        // Padre
+        close(Input_Graph_Pipe[1]);
+        // fcntl(endPipe[0], F_SETFL, O_NONBLOCK);
+        char readbuffer[WORD_LENGHT];
+        char endBuffer[80];
 
-        int nbytes;
-        char word[WORD_LENGHT + 1];
+        while (1)
+        {
+            read(endPipe[0], endBuffer, sizeof(endBuffer));
+            if (strcmp(endBuffer, "end") == 0)
+            {
+                break;
+            }
+            read(Input_Graph_Pipe[0], readbuffer, sizeof(readbuffer));
 
-        nbytes = read(Input_Graph_Pipe[0], word, sizeof(word));
+            createNode(readbuffer);
 
-        printf("letto : %d\n", nbytes);
+            write(nextStep_Pipe[1], "nulla", 1); // Il padre notifica al figlio che può scrivere la prossima parola sulla PIPE
+        }
 
-        // PADRE
+        // A questo punto del codice, il figlio ha ottenuto le parole distinte e creato i nodi del grafo (non gli archi)
+
+        printGraph();
     }
 }
