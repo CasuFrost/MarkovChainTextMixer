@@ -13,6 +13,7 @@
         "time.h": "c",
         "errno.h": "c",
         "stat.h": "c",
-        "rootheader.h": "c"
+        "rootheader.h": "c",
+        "graphmaker.h": "c"
     }
 }

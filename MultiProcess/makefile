@@ -2,7 +2,7 @@ CC := gcc
 
 ALL: multiProcess clean
 
-multiProcess :  src/compito2.o  src/main.o 
+multiProcess :  src/fileReader2.o src/compito2.o  src/main.o 
 	$(CC) $^ -o $@  
 
 %.o : %.c
