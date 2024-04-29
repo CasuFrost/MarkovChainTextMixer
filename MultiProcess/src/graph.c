@@ -75,6 +75,7 @@ void createEdge(struct Node *node1, struct Node *node2, float w)
 
 void printGraph()
 {
+    // return;
     for (int i = 0; i < nodesSize; i++)
     {
         printf("\nnodo : %s vicini :", nodes[i].word);
@@ -84,6 +85,7 @@ void printGraph()
             printf("%s - %f, ", (nodes[i]).edges[j].node->word, (nodes[i]).edges[j].weight);
         }
     }
+    // printf("\ngrafo printato\n");
 }
 
 void createNode(char word[WORD_LENGHT])

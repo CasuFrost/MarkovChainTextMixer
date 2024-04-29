@@ -35,8 +35,8 @@ void readFileAndSendWords(char *input, int Input_Graph_Pipe[2], int endPipe[2], 
         read(nextStep_Pipe[0], readbuffer, sizeof(readbuffer)); // Il figlio attende l'ordine del padre per la prossima parola
     }
     write(endPipe[1], "end", 3);
-    return;
-    // A questo punto del codice, il padre ha letto tutte le parole distinte nel file CSV, e le ha inviate al figlio
+    // return;
+    //  A questo punto del codice, il padre ha letto tutte le parole distinte nel file CSV, e le ha inviate al figlio
     fseek(fp, 0, SEEK_SET); /* Torno all'inizio del file */
 
     char nodeTo[WORD_LENGHT]; // Controllo la prima parola in questione
@@ -86,10 +86,15 @@ void readFileAndSendWords(char *input, int Input_Graph_Pipe[2], int endPipe[2], 
 
                 char buffer[2 * WORD_LENGHT];
                 sprintf(buffer, "%d %s %s\0", wordCounter, tmp, freq);
-                write(endPipe[1], "aaa", 3);
-                // printf("Invio la stringa : %s\n", buffer);
+
+                // printf("padre comunica\n");
+                write(endPipe[1], "aaa\0", 5);
+                // printf("%d %s %s\n", wordCounter, tmp, freq);
+                //   write(endPipe[1], "aaa", 3);
+                //    printf("Invio la stringa : %s\n", buffer);
                 write(Input_Graph_Pipe[1], buffer, (strlen(buffer) + 1));
                 read(nextStep_Pipe[0], readbuffer, sizeof(readbuffer)); // Il figlio attende l'ordine del padre per la prossima parola
+                // printf("padre riceve conferma\n--------------------------\n");
             }
             else
             {
@@ -101,7 +106,7 @@ void readFileAndSendWords(char *input, int Input_Graph_Pipe[2], int endPipe[2], 
         }
         wordCounter++;
     }
-    // printf("scrivo fine\n");
+    // printf("padre ha finito\n");
     write(endPipe[1], "end\0", 5);
     write(Input_Graph_Pipe[1], "end", 3);
 }
