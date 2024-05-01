@@ -57,12 +57,14 @@ void compito2(char *input, char *output, char *numParole, char start[WORD_LENGHT
     int Input_Graph_Pipe[2];
     int nextStep_Pipe[2];
     int endPipe[2];
+    int endPipe2[2];
 
     pid_t pid;
 
     pipe(Input_Graph_Pipe); // Questa pipe verrà utilizzata per i dati
     pipe(nextStep_Pipe);    // Questa pipe verrà per coordinare figlio e padre
     pipe(endPipe);          // Questa pipe verrà utilizzata per decretare la fine della lettura
+    pipe(endPipe2);
 
     if ((pid = fork()) == -1)
     {
@@ -73,7 +75,7 @@ void compito2(char *input, char *output, char *numParole, char start[WORD_LENGHT
     if (pid != 0)
     {
         // Figlio
-        readFileAndSendWords(input, Input_Graph_Pipe, endPipe, nextStep_Pipe);
+        readFileAndSendWords(input, Input_Graph_Pipe, endPipe, nextStep_Pipe, endPipe2);
         // exit(0);
     }
     else
@@ -87,25 +89,28 @@ void compito2(char *input, char *output, char *numParole, char start[WORD_LENGHT
         while (1)
         {
             read(endPipe[0], endBuffer, sizeof(endBuffer));
+            // printf("FIGLIO : mi preparo a ricevere, endBuffer : %s\n", endBuffer);
             if (strcmp(endBuffer, "end") == 0)
             {
                 break;
             }
             read(Input_Graph_Pipe[0], readbuffer, sizeof(readbuffer));
-
+            // printf("FIGLIO : ho letto ciò che padre ha detto\n");
             createNode(readbuffer);
-
             write(nextStep_Pipe[1], "nulla", 1); // Il padre notifica al figlio che può scrivere la prossima parola sulla PIPE
+            // printf("FIGLIO : pronto al prossimo step\n");
         }
         // printGraph();
-        // printf("\n");
+        //  printf("ho ricevuto le parole del grafo\n");
         // return;
         // A questo punto del codice, il figlio ha ottenuto le parole distinte e creato i nodi del grafo (non gli archi)
+        // printf("figlio INIZIA ASCOLTO, in endBuffer c'è %s\n", endBuffer);
         while (1)
         {
-            read(endPipe[0], endBuffer, sizeof(endBuffer));
-            // printf("figlio ha ascoltato\n");
-            if (strcmp(endBuffer, "end") == 0)
+            // printf("figlio si appresta a leggere endPipe\n");
+            read(endPipe2[0], endBuffer, sizeof(endBuffer));
+            // printf("figlio ha letto endPipe e ora ascolta \n");
+            if (strcmp(endBuffer, "end\0") == 0)
             {
                 // printf("figlio ha finito\n");
                 break;
