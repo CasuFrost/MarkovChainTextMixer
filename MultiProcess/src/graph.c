@@ -18,6 +18,12 @@ struct Edge
 int nodesSize = 0;
 struct Node *nodes;
 
+struct Node *getGraph()
+{
+    struct Node *n = nodes;
+    return n;
+}
+
 void addNearId(int nodeFrom, int nodeTo, float w)
 {
     nodes[nodeFrom].nearSize++;
@@ -331,4 +337,72 @@ void freeGraphStructures()
         free(nodes[i].edges);
     }
     free(nodes);
+}
+
+void writeOnFileGraph(char *fileName, int words, char start[WORD_LENGHT]) /*Questa funzione legge il grafo contenente le parole e le frequenze, ed eseguendo una passeggiata
+sul grafo, scrive il contenuto sul file*/
+{
+    FILE *fp;
+    fp = fopen(fileName, "w+"); /*Apro il file di output*/
+
+    if (fp == NULL)
+    {
+        printf("Errore nell'apertura dei file.\n");
+        exit(1);
+    }
+
+    int firstWord = 0; /* Questa variabile serve esclusivamente ad indicare quando o no andare a capo*/
+
+    if (searchIdFromWord(start) == -1) /* Se il punto di partenza non è presente, si parte dal punto */
+    {
+        if ((strcmp(start, "!") == 0) || (strcmp(start, "?") == 0))
+        {
+            strcpy(start, ".");
+        }
+        else
+        {
+            printf("La parola che hai inserito, non è presente nel testo!\n");
+            exit(1);
+        }
+    }
+
+    int id = selectNearId(searchIdFromWord(start));
+
+    int maiusc = 1;
+    char tmp[WORD_LENGHT];
+
+    while (words > 0)
+    {
+        strcpy(tmp, nodes[id].word);
+
+        if (maiusc == 1) /* Controllo se la parola deve avere la prima lettera maiuscola */
+        {
+            if (tmp[0] > 96 && tmp[0] < 123)
+            {
+                tmp[0] -= 32;
+            }
+            maiusc = 0;
+        }
+
+        fprintf(fp, "%s ", tmp); /* Scrivo sul file la parola ed uno spazio */
+
+        id = selectNearId(id); /* Seleziono la prossima parola tramite uno dei nodi adiacenti al nodo attuale */
+
+        if (strcmp(tmp, ".") == 0 || strcmp(tmp, "!") == 0 || strcmp(tmp, "?") == 0)
+        {
+            /* Se la parola attuale è un punto, la prossima avrà la iniziale maiuscola */
+            maiusc = 1;
+        }
+
+        if (words % 20 == 0 && firstWord == 1) /* Ogni 20 parole, vado a capo */
+        {
+            fprintf(fp, "\n");
+        }
+
+        firstWord = 1;
+        words--;
+    }
+
+    freeGraphStructures(); /* Libero le strutture del grafo che ho allocato */
+    fclose(fp);
 }

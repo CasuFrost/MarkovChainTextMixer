@@ -14,6 +14,7 @@
         "errno.h": "c",
         "stat.h": "c",
         "rootheader.h": "c",
-        "graphmaker.h": "c"
+        "graphmaker.h": "c",
+        "filereader2.h": "c"
     }
 }

@@ -4,6 +4,8 @@ struct Node;
 
 struct Edge;
 
+struct Node *getGraph();
+
 void addNearId(int nodeFrom, int nodeTo, float w);
 
 void addNear(struct Node *nodeFrom, struct Node *nodeTo, float w);

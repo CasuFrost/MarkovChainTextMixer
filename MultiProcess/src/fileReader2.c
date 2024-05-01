@@ -1,4 +1,4 @@
-#include "../headers/compito2.h"
+#include "../headers/rootHeader.h"
 
 void readFileAndSendWords(char *input, int Input_Graph_Pipe[2], int endPipe[2], int nextStep_Pipe[2], int endPipe2[2])
 {
@@ -85,8 +85,8 @@ void readFileAndSendWords(char *input, int Input_Graph_Pipe[2], int endPipe[2], 
                 freq[j] = '\0';
                 j = 0;
 
-                char buffer[2 * WORD_LENGHT];
-                sprintf(buffer, "%d %s %s\0", wordCounter, tmp, freq);
+                char buffer[3 * WORD_LENGHT];
+                sprintf(buffer, "%d %s %s", wordCounter, tmp, freq);
 
                 // printf("padre comunica\n");
                 write(endPipe2[1], "aaa\0", 5);
