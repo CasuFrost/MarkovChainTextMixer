@@ -194,10 +194,6 @@ void initMatrix(int words)
     // printf("\n\n");
 }
 
-/* matrix[i,j]=x implica che
-array_parole[j] si trova dopo array_parole[i] con una frequenza x
-*/
-
 int punteggiaturaDaScartare(char c)
 {
     if (((int)c >= 34 && (int)c <= 38) || ((int)c >= 40 && (int)c <= 45) ||

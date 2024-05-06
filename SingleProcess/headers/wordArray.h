@@ -6,11 +6,9 @@ un insieme.*/
 
 void freeMatrix();
 
-int **realloc2dIntArray(int **ipp, int n, int m);
+int checkIfWordInHashMap(char word[WORD_LENGHT]);
 
-int **malloc2dIntArray(int n, int m);
-
-void free2dIntArray(int **ipp, int n, int m);
+int getWordIdFromHashMap(char word[WORD_LENGHT]);
 
 void addWord(char ***array_parole, int *counter, char word[WORD_LENGHT]);
 

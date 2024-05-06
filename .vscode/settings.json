@@ -16,6 +16,7 @@
         "rootheader.h": "c",
         "graphmaker.h": "c",
         "filereader2.h": "c",
-        "hashtable.h": "c"
+        "hashtable.h": "c",
+        "string.h": "c"
     }
 }
