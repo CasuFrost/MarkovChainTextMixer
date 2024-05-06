@@ -1,5 +1,5 @@
 #include "../headers/hashTable.h"
-#define HASHSIZE 100
+
 unsigned int hash(char word[WORD_LENGHT])
 {
     unsigned int hashVal;
@@ -9,5 +9,6 @@ unsigned int hash(char word[WORD_LENGHT])
     {
         hashVal = word[i] + 31 * hashVal;
     }
-    printf("%d\n", hashVal % HASHSIZE);
+    return hashVal % HASHSIZE;
+    // printf("%d\n", hashVal % HASHSIZE);
 }

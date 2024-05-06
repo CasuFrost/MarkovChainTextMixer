@@ -5,18 +5,51 @@ un insieme.*/
 #include "../headers/hashTable.h"
 #include "../headers/ioOperation.h"
 
+struct WordElement
+{
+    char word[WORD_LENGHT];
+    struct WordElement *next;
+    int id;
+};
+
+struct WordElement *buckets[HASHSIZE] = {NULL};
+
 int *matrix;
 int n;
 
 void freeMatrix()
 {
     free(matrix);
+
+    buckets[0] = malloc(sizeof(struct WordElement));
+    buckets[0]->id = 5;
+
+    for (int i = 0; i < HASHSIZE; i++)
+    {
+        if (buckets[i] != NULL)
+        {
+            printf("%s", buckets[i]->word);
+            if (buckets[i]->next != NULL)
+            {
+                struct WordElement *tmp = buckets[i];
+                while (tmp->next != NULL)
+                {
+                    tmp = tmp->next;
+                    printf("--> %s", tmp->word);
+                }
+            }
+        }
+        else
+        {
+            printf("NULL");
+        }
+        printf("\n");
+    }
 }
 
 void addWord(char ***array_parole, int *counter, char word[WORD_LENGHT]) /* Questa funzione prende in input un array di parole (con la sua
 dimensione) ed una parola, ed aggiunge la parola nell'array (esclusivamente se non vi è già presente), questo array simula quindi un SET*/
 {
-    hash(word);
     int k = *counter;
     minuscolaStringa(word);
     if (!checkIfWordInArray(*array_parole, k, word)) /*Controlla se la parola non è già nell'array*/
@@ -24,6 +57,27 @@ dimensione) ed una parola, ed aggiunge la parola nell'array (esclusivamente se n
         // Aggiungi all'array delle parole
         k++;
         *counter = k;
+
+        int hashVal = hash(word);
+        if (buckets[hashVal] == NULL)
+        {
+            buckets[hashVal] = malloc(sizeof(struct WordElement));
+            buckets[hashVal]->id = k - 1;
+            buckets[hashVal]->next = NULL;
+            strcpy(buckets[hashVal]->word, word);
+        }
+        else
+        {
+            struct WordElement *tmp = buckets[hashVal];
+            while (tmp->next != NULL)
+            {
+                tmp = tmp->next;
+            }
+            tmp->next = malloc(sizeof(struct WordElement));
+            (tmp->next)->id = k - 1;
+            (tmp->next)->next = NULL;
+            strcpy((tmp->next)->word, word);
+        }
 
         *array_parole = realloc(*array_parole, k * sizeof(char *));
         (*array_parole)[k - 1] = malloc(WORD_LENGHT);
