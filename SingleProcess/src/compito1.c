@@ -127,6 +127,8 @@ int compito1(char *input, char *output)
 {
     // c1(input, output);
     // printf("\n");
+    // printf("%d", hash("ciao\0gdfheeeeeeeeeeeeg"));
+
     clock_t start, end;
     start = clock();
     double cpu_time_used;
@@ -139,7 +141,7 @@ int compito1(char *input, char *output)
     // printMatrix(wordsCounter, 0);
 
     printFrequence(array_parole, output); // Scrivo il file
-
+    printf("parole distinte : %d\n", wordsCounter);
     // Libero la memoria
     freeMatrix();
     free(array_parole);

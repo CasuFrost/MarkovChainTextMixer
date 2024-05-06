@@ -8,7 +8,7 @@
 #include <time.h>
 #include <unistd.h>
 
-#define HASHSIZE 500
+#define HASHSIZE 1000
 #define MAX_LINE_LENGHT 150000
 #define WORD_LENGHT 62 /*30 byte per la parola, 1 byte per un eventuale apostrofo, il byte finale per '\0' */
 //

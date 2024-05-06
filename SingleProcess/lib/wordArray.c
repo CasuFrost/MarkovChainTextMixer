@@ -14,37 +14,92 @@ struct WordElement
 
 struct WordElement *buckets[HASHSIZE] = {NULL};
 
+int collisionCounter = 0;
+
 int *matrix;
 int n;
+
+int checkIfWordInHashMap(char word[WORD_LENGHT])
+{
+
+    int hashVal = hash(word);
+    if (buckets[hashVal] == NULL)
+    {
+        return 0;
+    }
+    else
+    {
+        if (strcmp(buckets[hashVal]->word, word) == 0)
+        {
+            return 1;
+        }
+        struct WordElement *tmp = buckets[hashVal];
+        while (tmp->next != NULL)
+        {
+            tmp = tmp->next;
+            if (strcmp(tmp->word, word) == 0)
+            {
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
+int getWordIdFromHashMap(char word[WORD_LENGHT])
+{
+
+    int hashVal = hash(word);
+    if (buckets[hashVal] == NULL)
+    {
+        printf("errore su %s indice : %d\n", word, hashVal);
+        exit(1);
+    }
+    else
+    {
+        if (strcmp(buckets[hashVal]->word, word) == 0)
+        {
+            return buckets[hashVal]->id;
+        }
+        struct WordElement *tmp = buckets[hashVal];
+        while (tmp->next != NULL)
+        {
+            tmp = tmp->next;
+            if (strcmp(tmp->word, word) == 0)
+            {
+                return tmp->id;
+            }
+        }
+    }
+}
 
 void freeMatrix()
 {
     free(matrix);
-
-    buckets[0] = malloc(sizeof(struct WordElement));
-    buckets[0]->id = 5;
+    printf("collisioni : %d\n", collisionCounter);
+    return;
+    int wordsInHashMap = 0;
 
     for (int i = 0; i < HASHSIZE; i++)
     {
         if (buckets[i] != NULL)
         {
-            printf("%s", buckets[i]->word);
+            printf("%s : %d", buckets[i]->word, i);
+            wordsInHashMap++;
             if (buckets[i]->next != NULL)
             {
                 struct WordElement *tmp = buckets[i];
                 while (tmp->next != NULL)
                 {
                     tmp = tmp->next;
+                    wordsInHashMap++;
                     printf("--> %s", tmp->word);
                 }
             }
+            printf("\n");
         }
-        else
-        {
-            printf("NULL");
-        }
-        printf("\n");
     }
+    printf("parole distinte hasmap : %d\n", wordsInHashMap);
 }
 
 void addWord(char ***array_parole, int *counter, char word[WORD_LENGHT]) /* Questa funzione prende in input un array di parole (con la sua
@@ -52,7 +107,7 @@ dimensione) ed una parola, ed aggiunge la parola nell'array (esclusivamente se n
 {
     int k = *counter;
     minuscolaStringa(word);
-    if (!checkIfWordInArray(*array_parole, k, word)) /*Controlla se la parola non è già nell'array*/
+    if (!checkIfWordInHashMap(word)) /*Controlla se la parola non è già nell'array*/
     {
         // Aggiungi all'array delle parole
         k++;
@@ -68,6 +123,7 @@ dimensione) ed una parola, ed aggiunge la parola nell'array (esclusivamente se n
         }
         else
         {
+            collisionCounter++;
             struct WordElement *tmp = buckets[hashVal];
             while (tmp->next != NULL)
             {
@@ -180,8 +236,8 @@ void fillMatrixWithWord(char *fileName, char **array_parole, int wordsCounter)
                 // PAROLA LETTA &&&&&&&&&&&&&&&&&&&&&&
                 currentWord[j] = '\0'; /* A questo punto 'tmp' contiene la parola letta, quindi aggiungo il simbolo di fine stringa*/
                 minuscolaStringa(currentWord);
-                currentId = getWordArrayId(array_parole, wordsCounter, currentWord);
-                previousId = getWordArrayId(array_parole, wordsCounter, previousWord);
+                currentId = getWordIdFromHashMap(currentWord);
+                previousId = getWordIdFromHashMap(previousWord);
 
                 matrix[previousId * n + currentId]++;
                 strcpy(previousWord, currentWord);
@@ -198,8 +254,8 @@ void fillMatrixWithWord(char *fileName, char **array_parole, int wordsCounter)
                 currentWord[j + 1] = '\0';
                 minuscolaStringa(currentWord);
 
-                currentId = getWordArrayId(array_parole, wordsCounter, currentWord);
-                previousId = getWordArrayId(array_parole, wordsCounter, previousWord);
+                currentId = getWordIdFromHashMap(currentWord);
+                previousId = getWordIdFromHashMap(previousWord);
 
                 matrix[previousId * n + currentId]++;
                 strcpy(previousWord, currentWord);
@@ -217,8 +273,8 @@ void fillMatrixWithWord(char *fileName, char **array_parole, int wordsCounter)
                 currentWord[0] = src[i];
                 currentWord[1] = '\0'; /* A questo punto 'tmp' contiene la parola letta, quindi aggiungo il simbolo di fine stringa*/
 
-                currentId = getWordArrayId(array_parole, wordsCounter, currentWord);
-                previousId = getWordArrayId(array_parole, wordsCounter, previousWord);
+                currentId = getWordIdFromHashMap(currentWord);
+                previousId = getWordIdFromHashMap(previousWord);
 
                 matrix[previousId * n + currentId]++;
                 strcpy(previousWord, currentWord);
@@ -232,8 +288,8 @@ void fillMatrixWithWord(char *fileName, char **array_parole, int wordsCounter)
                 currentWord[j] = '\0'; /* A questo punto 'tmp' contiene la parola letta, quindi aggiungo il simbolo di fine stringa*/
                 minuscolaStringa(currentWord);
 
-                currentId = getWordArrayId(array_parole, wordsCounter, currentWord);
-                previousId = getWordArrayId(array_parole, wordsCounter, previousWord);
+                currentId = getWordIdFromHashMap(currentWord);
+                previousId = getWordIdFromHashMap(previousWord);
 
                 matrix[previousId * n + currentId]++;
                 strcpy(previousWord, currentWord);
@@ -244,8 +300,8 @@ void fillMatrixWithWord(char *fileName, char **array_parole, int wordsCounter)
                 currentWord[0] = src[i];
                 currentWord[1] = '\0';
 
-                currentId = getWordArrayId(array_parole, wordsCounter, currentWord);
-                previousId = getWordArrayId(array_parole, wordsCounter, previousWord);
+                currentId = getWordIdFromHashMap(currentWord);
+                previousId = getWordIdFromHashMap(previousWord);
 
                 matrix[previousId * n + currentId]++;
                 strcpy(previousWord, currentWord);
@@ -263,8 +319,9 @@ void fillMatrixWithWord(char *fileName, char **array_parole, int wordsCounter)
                 currentWord[j] = '\0'; /* A questo punto 'tmp' contiene la parola letta, quindi aggiungo il simbolo di fine stringa*/
                 minuscolaStringa(currentWord);
 
-                currentId = getWordArrayId(array_parole, wordsCounter, currentWord);
-                previousId = getWordArrayId(array_parole, wordsCounter, previousWord);
+                currentId = getWordIdFromHashMap(currentWord);
+
+                previousId = getWordIdFromHashMap(previousWord);
 
                 matrix[previousId * n + currentId]++;
 
@@ -284,8 +341,8 @@ void fillMatrixWithWord(char *fileName, char **array_parole, int wordsCounter)
         currentWord[j] = '\0'; /* A questo punto 'tmp' contiene la parola letta, quindi aggiungo il simbolo di fine stringa*/
         minuscolaStringa(currentWord);
 
-        currentId = getWordArrayId(array_parole, wordsCounter, currentWord);
-        previousId = getWordArrayId(array_parole, wordsCounter, previousWord);
+        currentId = getWordIdFromHashMap(currentWord);
+        previousId = getWordIdFromHashMap(previousWord);
 
         matrix[previousId * n + currentId]++;
     }
