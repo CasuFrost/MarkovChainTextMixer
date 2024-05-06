@@ -2,6 +2,7 @@
 Il termine array, è in realtà improprio, in quanto tale struttura sarà
 un insieme.*/
 #include "../headers/wordArray.h"
+#include "../headers/hashTable.h"
 #include "../headers/ioOperation.h"
 
 int *matrix;
@@ -12,50 +13,10 @@ void freeMatrix()
     free(matrix);
 }
 
-int **realloc2dIntArray(int **ipp, int n, int m)
-{
-    ipp = (int **)realloc(ipp, n * sizeof(int *));
-
-    for (int i = n - 1; i < n; i++)
-    {
-        ipp[i] = (int *)realloc(ipp[i], m * sizeof(int));
-        for (int j = 0; j < n; j++)
-        {
-            ipp[i][j] = 0;
-            // ipp[j][i] = 0;
-        }
-    }
-
-    return ipp;
-}
-
-int **malloc2dIntArray(int n, int m)
-{
-    int **ipp;
-
-    ipp = (int **)malloc(n * sizeof(int *));
-
-    for (int i = 0; i < n; i++)
-    {
-        ipp[i] = (int *)malloc(m * sizeof(int));
-    }
-
-    return ipp;
-}
-
-void free2dIntArray(int **ipp, int n, int m)
-{
-    for (int i = 0; i < n; i++)
-    {
-        free(ipp[i]);
-    }
-    free(ipp);
-}
-
 void addWord(char ***array_parole, int *counter, char word[WORD_LENGHT]) /* Questa funzione prende in input un array di parole (con la sua
 dimensione) ed una parola, ed aggiunge la parola nell'array (esclusivamente se non vi è già presente), questo array simula quindi un SET*/
 {
-
+    hash(word);
     int k = *counter;
     minuscolaStringa(word);
     if (!checkIfWordInArray(*array_parole, k, word)) /*Controlla se la parola non è già nell'array*/
