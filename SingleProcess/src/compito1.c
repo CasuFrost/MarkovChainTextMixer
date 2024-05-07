@@ -7,6 +7,7 @@ char **getWordFromFile(char *fileName, int *numberOfWords) /* Questa funzione pr
 un array di stringhe contenete le parole lette nel file.  prende come input anche un intero, che verrà
 aggiornato e conterrà il numero di parole*/
 {
+    calcPpower();
     int wordsCounter = 0;
     int fileSize;
     char tmp[WORD_LENGHT];
