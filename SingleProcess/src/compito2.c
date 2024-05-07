@@ -245,7 +245,7 @@ int compito2(char *input, char *output, char *numParole, char start[WORD_LENGHT]
         exit(1);
     }
 
-    if (atoi(numParole) > 400) // Compito nuovo
+    if (1) // Compito nuovo
     {
 
         /*Generazione di un punto di partenza casuale*/

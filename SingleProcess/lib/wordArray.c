@@ -12,14 +12,14 @@ struct WordElement
     int id;
 };
 
-struct WordElement *buckets[HASHSIZE] = {NULL};
+struct WordElement *buckets[HASHSIZE] = {NULL}; /* Struttura che conterrà l'hashTable */
 
 int collisionCounter = 0;
 
 int *matrix;
 int n;
 
-int checkIfWordInHashMap(char word[WORD_LENGHT])
+int checkIfWordInHashMap(char word[WORD_LENGHT]) /* controlla se nell'hashTable vi è già una parola */
 {
 
     int hashVal = hash(word);
@@ -46,7 +46,7 @@ int checkIfWordInHashMap(char word[WORD_LENGHT])
     return 0;
 }
 
-int getWordIdFromHashMap(char word[WORD_LENGHT])
+int getWordIdFromHashMap(char word[WORD_LENGHT]) /* restituisce l'ID relativo all' 'array_parole', contenuto nel record dentro l'hashTable */
 {
 
     int hashVal = hash(word);
@@ -73,13 +73,26 @@ int getWordIdFromHashMap(char word[WORD_LENGHT])
     }
 }
 
+void freeHashMap()
+{
+    for (int i = 0; i < HASHSIZE; i++)
+    {
+        if (buckets[i] != NULL)
+        {
+            free(buckets[i]);
+        }
+    }
+}
+
 void freeMatrix()
 {
     free(matrix);
     printf("collisioni : %d\n", collisionCounter);
-    return;
-    int wordsInHashMap = 0;
+}
 
+void printHashMap()
+{
+    int wordsInHashMap = 0;
     for (int i = 0; i < HASHSIZE; i++)
     {
         if (buckets[i] != NULL)
@@ -103,16 +116,18 @@ void freeMatrix()
 }
 
 void addWord(char ***array_parole, int *counter, char word[WORD_LENGHT]) /* Questa funzione prende in input un array di parole (con la sua
-dimensione) ed una parola, ed aggiunge la parola nell'array (esclusivamente se non vi è già presente), questo array simula quindi un SET*/
+dimensione) ed una parola, ed aggiunge la parola nell'array (esclusivamente se non vi è già presente), questo array simula quindi un SET, facendo uso dell'HASHTABLE per
+eseguire il controllo in tempo costante*/
 {
     int k = *counter;
     minuscolaStringa(word);
     if (!checkIfWordInHashMap(word)) /*Controlla se la parola non è già nell'array*/
     {
-        // Aggiungi all'array delle parole
+
         k++;
         *counter = k;
 
+        /*Aggiungo la parola dentro l'hashMap */
         int hashVal = hash(word);
         if (buckets[hashVal] == NULL)
         {
@@ -121,7 +136,7 @@ dimensione) ed una parola, ed aggiunge la parola nell'array (esclusivamente se n
             buckets[hashVal]->next = NULL;
             strcpy(buckets[hashVal]->word, word);
         }
-        else
+        else /* Vi è una collisioni, devo scorrere il bucket per poi aggiungere la parola in fondo ad esso*/
         {
             collisionCounter++;
             struct WordElement *tmp = buckets[hashVal];
@@ -135,15 +150,10 @@ dimensione) ed una parola, ed aggiunge la parola nell'array (esclusivamente se n
             strcpy((tmp->next)->word, word);
         }
 
+        // Aggiungi all'array delle parole
         *array_parole = realloc(*array_parole, k * sizeof(char *));
         (*array_parole)[k - 1] = malloc(WORD_LENGHT);
         strcpy((*array_parole)[k - 1], word);
-
-        // Aggiungi una riga alla matrice inizializzandola a zero
-    }
-    else
-    {
-        // Aggiorna il valore della matrice
     }
 }
 
@@ -175,7 +185,7 @@ void printMatrix(int wordsCounter, int f)
     }
 }
 
-void initMatrix(int words)
+void initMatrix(int words) /* Inizializza la matrice che verrà utilizzata per scrivere il file CSV */
 {
     n = words;
 
@@ -185,13 +195,9 @@ void initMatrix(int words)
     {
         for (int j = 0; j < n; j++)
         {
-
             matrix[i * words + j] = 0;
-            // printf("| %d |", matrix[i * words + j]);
         }
-        // printf("\n");
     }
-    // printf("\n\n");
 }
 
 int punteggiaturaDaScartare(char c)
@@ -207,6 +213,17 @@ int punteggiaturaDaScartare(char c)
 
 void fillMatrixWithWord(char *fileName, char **array_parole, int wordsCounter)
 {
+    /* NOTA IMPORTANTE : Questa funzione risulta nella sua struttura identica alla funzione 'getWordFromFile' vista nel file compito1.c
+    si occupa di leggere nuovamente tutto il file, questa volta però, piuttosto che salvare le parole, riempie i campi della matrice
+    già creata, la cui dimensione viene calcolata nella già citata 'getWordFromFile'.
+
+    DOMANDA : Perché non creare dinamicamente e riempire la matrice in 'getWordFromFile', evitando di leggere l'intero file input per 2 volte?
+
+    RISPOSTA : Ogni volta che viene modificata la matrice per aumentare la dimensione di ogni riga, va eseguita una re-alloc su ogni singola riga,
+    il costo computazionale diventa troppo grande e risulta inefficente, è stato testato che, è molto più efficente leggere per due volte di fila il file,
+    calcolando il numero di parole distinte per poi creare la matrice con la dimensione finale fin dall'inizio.
+    */
+
     int fileSize;
     char *src = putFileInBuffer(fileName, &fileSize);
     int j = 0;
@@ -220,17 +237,15 @@ void fillMatrixWithWord(char *fileName, char **array_parole, int wordsCounter)
     {
         if (j > WORD_LENGHT - 1)
         {
-            // printf("Il testo contiene una parola più lunga di 30 caratteri, oppure contiene una parola, in cui \nè presente un carattere non ASCII standard!\n");
             j = 0;
             continue;
         }
         if (punteggiaturaDaScartare(src[i]))
         {
-            // C'è della punteggiatura da scartare
             if (j != 0)
             {
-                // PAROLA LETTA &&&&&&&&&&&&&&&&&&&&&&
-                currentWord[j] = '\0'; /* A questo punto 'tmp' contiene la parola letta, quindi aggiungo il simbolo di fine stringa*/
+
+                currentWord[j] = '\0';
                 minuscolaStringa(currentWord);
                 currentId = getWordIdFromHashMap(currentWord);
                 previousId = getWordIdFromHashMap(previousWord);
@@ -241,11 +256,10 @@ void fillMatrixWithWord(char *fileName, char **array_parole, int wordsCounter)
             }
             continue;
         }
-        if ((int)src[i] == 39) // C'è un apostrofo
+        if ((int)src[i] == 39)
         {
             if (j != 0)
             {
-                // PAROLA LETTA &&&&&&&&&&&&&&&&&&&&&&
                 currentWord[j] = src[i];
                 currentWord[j + 1] = '\0';
                 minuscolaStringa(currentWord);
@@ -264,10 +278,8 @@ void fillMatrixWithWord(char *fileName, char **array_parole, int wordsCounter)
         {
             if (j == 0)
             {
-                // PAROLA LETTA &&&&&&&&&&&&&&&&&&&&&&
-                /*trovato punto da solo*/
                 currentWord[0] = src[i];
-                currentWord[1] = '\0'; /* A questo punto 'tmp' contiene la parola letta, quindi aggiungo il simbolo di fine stringa*/
+                currentWord[1] = '\0';
 
                 currentId = getWordIdFromHashMap(currentWord);
                 previousId = getWordIdFromHashMap(previousWord);
@@ -279,9 +291,7 @@ void fillMatrixWithWord(char *fileName, char **array_parole, int wordsCounter)
             }
             else
             {
-                // PAROLA LETTA &&&&&&&&&&&&&&&&&&&&&&
-                //  La parola attuale va salvata nel buffer
-                currentWord[j] = '\0'; /* A questo punto 'tmp' contiene la parola letta, quindi aggiungo il simbolo di fine stringa*/
+                currentWord[j] = '\0';
                 minuscolaStringa(currentWord);
 
                 currentId = getWordIdFromHashMap(currentWord);
@@ -292,7 +302,6 @@ void fillMatrixWithWord(char *fileName, char **array_parole, int wordsCounter)
 
                 j = 0;
 
-                // Ora salvo il punto
                 currentWord[0] = src[i];
                 currentWord[1] = '\0';
 
@@ -305,13 +314,12 @@ void fillMatrixWithWord(char *fileName, char **array_parole, int wordsCounter)
                 continue;
             }
         }
-        // printf("%d ", (int)src[i]);
-        if (((int)src[i] >= 0 && (int)src[i] <= 32)) // Viene letto uno spazio o un accapo
+
+        if (((int)src[i] >= 0 && (int)src[i] <= 32))
         {
             if (j != 0) /*è stato letto uno spazio e c'è una parola nel buffer, va salvata la parola e svuotato il buffer*/
             {
 
-                // parola finita
                 currentWord[j] = '\0'; /* A questo punto 'tmp' contiene la parola letta, quindi aggiungo il simbolo di fine stringa*/
                 minuscolaStringa(currentWord);
 

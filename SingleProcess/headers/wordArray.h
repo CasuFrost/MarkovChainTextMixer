@@ -6,6 +6,10 @@ un insieme.*/
 
 void freeMatrix();
 
+void freeHashMap();
+
+void printHashMap();
+
 int checkIfWordInHashMap(char word[WORD_LENGHT]);
 
 int getWordIdFromHashMap(char word[WORD_LENGHT]);
@@ -15,10 +19,6 @@ void addWord(char ***array_parole, int *counter, char word[WORD_LENGHT]);
 void printMatrix(int wordsCounter, int f);
 
 void initMatrix(int words);
-
-/* matrix[i,j]=x implica che
-array_parole[j] si trova dopo array_parole[i] con una frequenza x
-*/
 
 int punteggiaturaDaScartare(char c);
 

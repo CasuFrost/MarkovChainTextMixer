@@ -1,5 +1,6 @@
-
+#include "../headers/rootHeader.h"
 #include "../headers/graph.h"
+#include "../headers/hashTable.h"
 
 struct Node
 {
@@ -15,13 +16,38 @@ struct Edge
     float weight;
 };
 
+struct WordId
+{
+    char word[WORD_LENGHT];
+    int wordId;
+    struct WordId *next;
+};
+
+struct WordId *hashTable[HASHSIZE];
+
+int collisionsCounter = 0;
 int nodesSize = 0;
 struct Node *nodes;
 
-struct Node *getGraph()
+void printHashTable()
 {
-    struct Node *n = nodes;
-    return n;
+    for (int i = 0; i < HASHSIZE; i++)
+    {
+        if (hashTable[i] != NULL)
+        {
+            printf("%s : %d", hashTable[i]->word, i);
+            if (hashTable[i]->next != NULL)
+            {
+                struct WordId *tmp = hashTable[i];
+                while (tmp->next != NULL)
+                {
+                    tmp = tmp->next;
+                    printf("--> %s", tmp->word);
+                }
+            }
+            printf("\n");
+        }
+    }
 }
 
 void addNearId(int nodeFrom, int nodeTo, float w)
@@ -81,7 +107,6 @@ void createEdge(struct Node *node1, struct Node *node2, float w)
 
 void printGraph()
 {
-    // return;
     for (int i = 0; i < nodesSize; i++)
     {
         printf("\nnodo : %s vicini :", nodes[i].word);
@@ -91,7 +116,6 @@ void printGraph()
             printf("%s - %f, ", (nodes[i]).edges[j].node->word, (nodes[i]).edges[j].weight);
         }
     }
-    // printf("\ngrafo printato\n");
 }
 
 void createNode(char word[WORD_LENGHT])
@@ -117,7 +141,58 @@ void createNode(char word[WORD_LENGHT])
     }
 
     nodes[nodesSize] = newNode;
+
+    // Add word in hashMap
+    int hashVal = hash(word);
+    if (hashTable[hashVal] == NULL)
+    {
+        hashTable[hashVal] = malloc(sizeof(struct WordId));
+        hashTable[hashVal]->wordId = nodesSize;
+        hashTable[hashVal]->next = NULL;
+        strcpy(hashTable[hashVal]->word, word);
+    }
+    else
+    {
+        collisionsCounter++;
+        struct WordId *tmp = hashTable[hashVal];
+        while (tmp->next != NULL)
+        {
+            tmp = tmp->next;
+        }
+        tmp->next = malloc(sizeof(struct WordId));
+        (tmp->next)->wordId = nodesSize;
+        (tmp->next)->next = NULL;
+        strcpy((tmp->next)->word, word);
+    }
+    // Add word in hashMap
+
     nodesSize++;
+}
+
+int getIdFromWordHasMap(char word[WORD_LENGHT])
+{
+    int hashVal = hash(word);
+    if (hashTable[hashVal] == NULL)
+    {
+        printf("errore su %s indice : %d\n", word, hashVal);
+        exit(1);
+    }
+    else
+    {
+        if (strcmp(hashTable[hashVal]->word, word) == 0)
+        {
+            return hashTable[hashVal]->wordId;
+        }
+        struct WordId *tmp = hashTable[hashVal];
+        while (tmp->next != NULL)
+        {
+            tmp = tmp->next;
+            if (strcmp(tmp->word, word) == 0)
+            {
+                return tmp->wordId;
+            }
+        }
+    }
 }
 
 int searchIdFromWord(char word[WORD_LENGHT]) /* Questa funzione  data una parola restituisce l'ID (la posizione nell'array) del nodo con quella parola*/
@@ -126,6 +201,11 @@ int searchIdFromWord(char word[WORD_LENGHT]) /* Questa funzione  data una parola
     {
         if (strcmp(nodes[i].word, word) == 0)
         {
+            if (i != getIdFromWordHasMap(word))
+            {
+                printf("indici diversi\n");
+                exit(1);
+            }
             return i;
         }
     }
@@ -135,7 +215,7 @@ int searchIdFromWord(char word[WORD_LENGHT]) /* Questa funzione  data una parola
 void createEdgeFromWord(int id1, char word2[WORD_LENGHT], float w)
 {
 
-    int id2 = searchIdFromWord(word2);
+    int id2 = getIdFromWordHasMap(word2);
 
     if (id1 == -1 || id2 == -1)
     {
@@ -276,7 +356,7 @@ sul grafo, scrive il contenuto sul file*/
 
     int firstWord = 0; /* Questa variabile serve esclusivamente ad indicare quando o no andare a capo*/
 
-    if (searchIdFromWord(start) == -1) /* Se il punto di partenza non è presente, si parte dal punto */
+    if (getIdFromWordHasMap(start) == -1) /* Se il punto di partenza non è presente, si parte dal punto */
     {
         if ((strcmp(start, "!") == 0) || (strcmp(start, "?") == 0))
         {
@@ -289,7 +369,7 @@ sul grafo, scrive il contenuto sul file*/
         }
     }
 
-    int id = selectNearId(searchIdFromWord(start));
+    int id = selectNearId(getIdFromWordHasMap(start));
 
     int maiusc = 1;
     char tmp[WORD_LENGHT];
@@ -325,84 +405,18 @@ sul grafo, scrive il contenuto sul file*/
         firstWord = 1;
         words--;
     }
-
+    // printHashTable();
+    printf("collisioni : %d\n", collisionsCounter);
     freeGraphStructures(); /* Libero le strutture del grafo che ho allocato */
     fclose(fp);
 }
 
 void freeGraphStructures()
 {
+
     for (int i = 0; i < nodesSize; i++)
     {
         free(nodes[i].edges);
     }
     free(nodes);
-}
-
-void writeOnFileGraph(char *fileName, int words, char start[WORD_LENGHT]) /*Questa funzione legge il grafo contenente le parole e le frequenze, ed eseguendo una passeggiata
-sul grafo, scrive il contenuto sul file*/
-{
-    FILE *fp;
-    fp = fopen(fileName, "w+"); /*Apro il file di output*/
-
-    if (fp == NULL)
-    {
-        printf("Errore nell'apertura dei file.\n");
-        exit(1);
-    }
-
-    int firstWord = 0; /* Questa variabile serve esclusivamente ad indicare quando o no andare a capo*/
-
-    if (searchIdFromWord(start) == -1) /* Se il punto di partenza non è presente, si parte dal punto */
-    {
-        if ((strcmp(start, "!") == 0) || (strcmp(start, "?") == 0))
-        {
-            strcpy(start, ".");
-        }
-        else
-        {
-            printf("La parola che hai inserito, non è presente nel testo!\n");
-            exit(1);
-        }
-    }
-
-    int id = selectNearId(searchIdFromWord(start));
-
-    int maiusc = 1;
-    char tmp[WORD_LENGHT];
-
-    while (words > 0)
-    {
-        strcpy(tmp, nodes[id].word);
-
-        if (maiusc == 1) /* Controllo se la parola deve avere la prima lettera maiuscola */
-        {
-            if (tmp[0] > 96 && tmp[0] < 123)
-            {
-                tmp[0] -= 32;
-            }
-            maiusc = 0;
-        }
-
-        fprintf(fp, "%s ", tmp); /* Scrivo sul file la parola ed uno spazio */
-
-        id = selectNearId(id); /* Seleziono la prossima parola tramite uno dei nodi adiacenti al nodo attuale */
-
-        if (strcmp(tmp, ".") == 0 || strcmp(tmp, "!") == 0 || strcmp(tmp, "?") == 0)
-        {
-            /* Se la parola attuale è un punto, la prossima avrà la iniziale maiuscola */
-            maiusc = 1;
-        }
-
-        if (words % 20 == 0 && firstWord == 1) /* Ogni 20 parole, vado a capo */
-        {
-            fprintf(fp, "\n");
-        }
-
-        firstWord = 1;
-        words--;
-    }
-
-    freeGraphStructures(); /* Libero le strutture del grafo che ho allocato */
-    fclose(fp);
 }

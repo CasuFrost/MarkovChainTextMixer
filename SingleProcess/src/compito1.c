@@ -2,7 +2,6 @@
 #include "../headers/stringOpertion.h" /* contiene funzioni riguardo il controllo delle stringhe*/
 #include "../headers/compito1.h"
 #include "../headers/wordArray.h"
-// #include "NEWcompito1.c"
 
 char **getWordFromFile(char *fileName, int *numberOfWords) /* Questa funzione prende come input il nome di un file, e restituisce
 un array di stringhe contenete le parole lette nel file.  prende come input anche un intero, che verrà
@@ -23,7 +22,6 @@ aggiornato e conterrà il numero di parole*/
 
     addWord(&array_parole, &wordsCounter, punto); // Aggiungo la parola all'array
     char c;
-    // int i = 0;
 
     for (int i = 0; i < fileSize; i++)
     {
@@ -108,7 +106,6 @@ aggiornato e conterrà il numero di parole*/
         }
     }
 
-    // fclose(fp);
     //  FINE DEL CICLO FOR
 
     if (j != 0) /*Se l'ultima lettera è un carattere, la parola nel buffer non è stata ancora aggiunta all'array*/
@@ -125,29 +122,31 @@ aggiornato e conterrà il numero di parole*/
 
 int compito1(char *input, char *output)
 {
-    // c1(input, output);
-    // printf("\n");
-    // printf("%d", hash("ciao\0gdfheeeeeeeeeeeeg"));
 
     clock_t start, end;
     start = clock();
     double cpu_time_used;
 
-    int wordsCounter = 0;                                        /* Questa variabile conterrà il numero di parole del file */
-    char **array_parole = getWordFromFile(input, &wordsCounter); /* Conta le parole del file */
+    int wordsCounter = 0; /* Questa variabile conterrà il numero di parole del file */
 
-    initMatrix(wordsCounter);                              // Inizializzo la matrice con numero di righe e colonne identico al numero delle parole distinte lette nel file
+    char **array_parole = getWordFromFile(input, &wordsCounter); /* Conta e salva le parole del file */
+
+    initMatrix(wordsCounter); // Inizializzo la matrice con numero di righe e colonne identico al numero delle parole distinte lette nel file
+
     fillMatrixWithWord(input, array_parole, wordsCounter); // Riempio i campi della matrice
-    // printMatrix(wordsCounter, 0);
 
     printFrequence(array_parole, output); // Scrivo il file
-    printf("parole distinte : %d\n", wordsCounter);
+
+    printf("parole distinte : %d\n", wordsCounter); /* Per scrivere a schermo statistiche relative all'HashTable */
+
     // Libero la memoria
+    freeHashMap();
     freeMatrix();
     free(array_parole);
 
     end = clock();
     cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
     printf("Programma andato a buon fine in %.2f secondi!\n", cpu_time_used);
+
     exit(0);
 }
