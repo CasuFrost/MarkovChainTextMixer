@@ -384,6 +384,12 @@ void printFrequence(char **array_parole, char *fileName) /*Questa funzione legge
 
     fp = fopen(fileName, "w+"); // Creo il puntatore al file
 
+    if (fp == NULL)
+    {
+        printf("il percorso %s non è stato trovato\n", fileName);
+        exit(1);
+    }
+
     for (int i = 0; i < n; i++) /*Scorro ogni riga della matrice*/
     {
         // Faccio la somma della riga attuale

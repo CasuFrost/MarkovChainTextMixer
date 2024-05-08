@@ -15,6 +15,7 @@ struct Edge
     struct Node *node;
     float weight;
 };
+
 void readStringReciviedFromPipe(char readbuffer[WORD_LENGHT])
 {
 

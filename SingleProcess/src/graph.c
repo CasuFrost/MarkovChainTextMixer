@@ -174,8 +174,9 @@ int getIdFromWordHasMap(char word[WORD_LENGHT])
     int hashVal = hash(word);
     if (hashTable[hashVal] == NULL)
     {
-        printf("errore su %s indice : %d\n", word, hashVal);
-        exit(1);
+        // printf("errore su %s indice : %d\n", word, hashVal);
+        return -1;
+        // exit(1);
     }
     else
     {
@@ -193,6 +194,7 @@ int getIdFromWordHasMap(char word[WORD_LENGHT])
             }
         }
     }
+    return -1;
 }
 
 int searchIdFromWord(char word[WORD_LENGHT]) /* Questa funzione  data una parola restituisce l'ID (la posizione nell'array) del nodo con quella parola*/
@@ -226,6 +228,7 @@ void createEdgeFromWord(int id1, char word2[WORD_LENGHT], float w)
 
 void createGraphFromFile(char *fileName)
 {
+
     int wordCounter = 0;
     FILE *fp;
     fp = fopen(fileName, "r"); /*Apro il file di input*/
@@ -347,7 +350,7 @@ sul grafo, scrive il contenuto sul file*/
 {
     FILE *fp;
     fp = fopen(fileName, "w+"); /*Apro il file di output*/
-
+    printf("dovremmo iniziare con %s\n", start);
     if (fp == NULL)
     {
         printf("Errore nell'apertura dei file.\n");
@@ -364,14 +367,26 @@ sul grafo, scrive il contenuto sul file*/
         }
         else
         {
-            printf("La parola che hai inserito, non è presente nel testo!\n");
+            printf("La parola che hai inserito, ossia %s non è presente nel testo!\n", start);
             exit(1);
         }
     }
 
-    int id = selectNearId(getIdFromWordHasMap(start));
+    printf("inizieremo con %s\n", start);
 
     int maiusc = 1;
+
+    if (!((strcmp(start, "!") == 0) || (strcmp(start, "?") == 0) || (strcmp(start, ".") == 0)))
+    {
+        char tmp[WORD_LENGHT];
+        start[0] -= 32;
+        fprintf(fp, "%s ", start);
+        start[0] += 32;
+        maiusc = 0;
+    }
+
+    int id = selectNearId(getIdFromWordHasMap(start));
+
     char tmp[WORD_LENGHT];
 
     while (words > 0)
