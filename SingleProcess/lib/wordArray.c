@@ -19,6 +19,18 @@ int collisionCounter = 0;
 int *matrix;
 int n;
 
+void checkBucketSize()
+{
+    for (int i = 0; i < HASHSIZE; i++)
+    {
+        struct WordElement *tmp = buckets[i];
+        while (tmp->next != NULL)
+        {
+            tmp = tmp->next;
+        }
+    }
+}
+
 int checkIfWordInHashMap(char word[WORD_LENGHT]) /* controlla se nell'hashTable vi è già una parola */
 {
 
@@ -92,13 +104,17 @@ void freeMatrix()
 
 void printHashMap()
 {
+    // int bucketsUsed = 0;
     int wordsInHashMap = 0;
     for (int i = 0; i < HASHSIZE; i++)
     {
+        int wordInBuckets = 0;
         if (buckets[i] != NULL)
         {
-            printf("%s : %d", buckets[i]->word, i);
+            // bucketsUsed++;
+            printf("%d : %s", i, buckets[i]->word);
             wordsInHashMap++;
+            wordInBuckets++;
             if (buckets[i]->next != NULL)
             {
                 struct WordElement *tmp = buckets[i];
@@ -106,9 +122,11 @@ void printHashMap()
                 {
                     tmp = tmp->next;
                     wordsInHashMap++;
+                    wordInBuckets++;
                     printf("--> %s", tmp->word);
                 }
             }
+            // printf("%d contiene : %d parole", i, wordInBuckets);
             printf("\n");
         }
     }

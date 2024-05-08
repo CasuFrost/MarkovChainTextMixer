@@ -1,2 +1,4 @@
 Bisogna far si che il processo che scrive sul file sia parallelo, per ora nn fa nulla ed il processo che 
 crea la struttura si occupa anche di scrivere sul file.
+
+Implementare il compito 1 nella versione multi processo

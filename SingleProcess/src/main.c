@@ -2,55 +2,78 @@
 #include "../headers/rootHeader.h"
 #include "../headers/compito2.h"
 #include "../headers/compito1.h"
-void printMatrice(int **array, int n);
-void testMatrice2d(int n)
-{
-
-    int **array;
-
-    array = malloc(sizeof(int *) * n);
-
-    for (int i = 0; i < n; i++)
-    {
-        array[i] = malloc(sizeof(int) * n);
-    }
-
-    array[0][1] = 4;
-    array[1][1] = 3;
-    array[0][0] = 9;
-    array[1][0] = 2;
-    array[4][5] = 99;
-
-    printMatrice(array, n);
-    printf("\n");
-
-    array = realloc(array, sizeof(int *) * (n + 1));
-    for (int i = 0; i < n; i++)
-    {
-        array[i] = realloc(array[i], sizeof(int) * (n + 1));
-    }
-    array[n] = calloc((n + 1), sizeof(int));
-
-    printMatrice(array, n + 1);
-    exit(0);
-}
-
-void printMatrice(int **array, int n)
-{
-    for (int i = 0; i < n; i++)
-    {
-        for (int j = 0; j < n; j++)
-        {
-            printf("%d  ", array[i][j]);
-        }
-        printf("\n");
-    }
-}
 
 int main(int argc, char *argv[])
 {
-    // testMatrice2d(6);
-    //  testGraph();
+    if (0)
+    {
+        char *inputFile = NULL;
+        char *outputFile = NULL;
+        int codCompito = 0;
+        int numParole = 0;
+        int c;
+        while ((c = getopt(argc, argv, "12n:i:o:")) != -1)
+        {
+            switch (c)
+            {
+            case '1':
+                if (codCompito == 2)
+                {
+                    printf("Non è possibile svolgere entrambi i compiti.\n");
+                    exit(1);
+                }
+                codCompito = 1;
+                break;
+            case '2':
+                if (codCompito == 1)
+                {
+                    printf("Non è possibile svolgere entrambi i compiti.\n");
+                    exit(1);
+                }
+                codCompito = 2;
+                break;
+            case 'n':
+                numParole = atoi(optarg);
+                break;
+            case 'o':
+                outputFile = malloc(strlen(optarg));
+                strcpy(outputFile, optarg);
+                break;
+            case 'i':
+                inputFile = malloc(strlen(optarg));
+                strcpy(inputFile, optarg);
+                break;
+            default:
+                break;
+            }
+        }
+        if (codCompito == 0)
+        {
+            printf("è necessario specificare se si vuole eseguire il compito 1 o il compito 2.\n");
+            exit(1);
+        }
+        if (numParole <= 0 && codCompito == 2)
+        {
+            printf("inserire un numero di parole valido!\n");
+            exit(1);
+        }
+        if (inputFile == NULL || outputFile == NULL)
+        {
+            printf("è necessario specificare un file in input ed un file in output\n");
+            exit(1);
+        }
+        if (codCompito == 1)
+        {
+            compito1(inputFile, outputFile);
+        }
+        else
+        {
+            char punto[WORD_LENGHT] = ".";
+            // compito2(inputFile, outputFile, numParole, punto);
+        }
+        exit(0);
+    }
+
     if (argc < 4) // è necessario passare almeno un file in input ed uno in output
     {
         printf("è necessario fornire un file input, un file output,\nbisogna anche specificare se si vuole eseguire il compito 1 o 2.\n");

@@ -3,6 +3,8 @@
 int main(int argc, char *argv[])
 {
 
+    // exit(0);
+
     if (argc < 4) // è necessario passare almeno un file in input ed uno in output
     {
         printf("è necessario fornire un file input, un file output,\nbisogna anche specificare se si vuole eseguire il compito 1 o 2.\n");

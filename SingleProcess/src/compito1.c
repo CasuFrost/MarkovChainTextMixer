@@ -7,7 +7,6 @@ char **getWordFromFile(char *fileName, int *numberOfWords) /* Questa funzione pr
 un array di stringhe contenete le parole lette nel file.  prende come input anche un intero, che verrà
 aggiornato e conterrà il numero di parole*/
 {
-    calcPpower();
     int wordsCounter = 0;
     int fileSize;
     char tmp[WORD_LENGHT];
@@ -140,7 +139,8 @@ int compito1(char *input, char *output)
 
     printf("parole distinte : %d\n", wordsCounter); /* Per scrivere a schermo statistiche relative all'HashTable */
 
-    // Libero la memoria
+    // printHashMap();
+    //  Libero la memoria
     freeHashMap();
     freeMatrix();
     free(array_parole);
@@ -148,6 +148,5 @@ int compito1(char *input, char *output)
     end = clock();
     cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
     printf("Programma andato a buon fine in %.2f secondi!\n", cpu_time_used);
-
     exit(0);
 }

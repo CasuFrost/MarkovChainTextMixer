@@ -1,5 +1,5 @@
 #include "rootHeader.h"
 
-long long hash(char word[WORD_LENGHT]);
+unsigned int hash(char word[WORD_LENGHT]);
 
 void calcPpower();
