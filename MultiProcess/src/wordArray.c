@@ -137,6 +137,7 @@ void addWord(char ***array_parole, int *counter, char word[WORD_LENGHT]) /* Ques
 dimensione) ed una parola, ed aggiunge la parola nell'array (esclusivamente se non vi è già presente), questo array simula quindi un SET, facendo uso dell'HASHTABLE per
 eseguire il controllo in tempo costante*/
 {
+    // printf("%s\n", word);
     int k = *counter;
     minuscolaStringa(word);
     if (!checkIfWordInHashMap(word)) /*Controlla se la parola non è già nell'array*/

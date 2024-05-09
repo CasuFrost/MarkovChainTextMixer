@@ -2,9 +2,9 @@
 #include "../headers/ioOperation.h"
 #include "../headers/wordArray.h"
 
-char **getWordFromFile(char *fileName, int *numberOfWords) /* Questa funzione prende come input il nome di un file, e restituisce
-un array di stringhe contenete le parole lette nel file.  prende come input anche un intero, che verrà
-aggiornato e conterrà il numero di parole*/
+char **getWordFromFile(char *fileName, int *numberOfWords, int inputPipe) /* Questa funzione prende come input il nome di un file, e restituisce
+ un array di stringhe contenete le parole lette nel file.  prende come input anche un intero, che verrà
+ aggiornato e conterrà il numero di parole*/
 {
     int wordsCounter = 0;
     int fileSize;
@@ -92,7 +92,8 @@ aggiornato e conterrà il numero di parole*/
             {
                 // parola finita
                 tmp[j] = '\0'; /* A questo punto 'tmp' contiene la parola letta, quindi aggiungo il simbolo di fine stringa*/
-
+                printf("scrivo %s\n", tmp);
+                write(inputPipe, tmp, sizeof(tmp));
                 addWord(&array_parole, &wordsCounter, tmp); // Aggiungo la parola all'array
 
                 j = 0;
@@ -110,7 +111,7 @@ aggiornato e conterrà il numero di parole*/
     if (j != 0) /*Se l'ultima lettera è un carattere, la parola nel buffer non è stata ancora aggiunta all'array*/
     {
         tmp[j] = '\0'; /* A questo punto 'tmp' contiene la parola letta, quindi aggiungo il simbolo di fine stringa*/
-
+        write(inputPipe, tmp, sizeof(tmp));
         addWord(&array_parole, &wordsCounter, tmp); // Aggiungo la parola all'array
     }
 
@@ -121,5 +122,27 @@ aggiornato e conterrà il numero di parole*/
 
 void compito1(char *input, char *output)
 {
+    pid_t pid;
+    pid = fork();
+    int inputPipe[2];
+    pipe(inputPipe);
+
+    if (pid == 0)
+    {
+        close(inputPipe[1]);
+        // Child
+        char buf[30];
+        // read(inputPipe[0], buf, 30);
+        // printf("%s\n", buf);
+    }
+    else
+    {
+        // Parent
+        // close(inputPipe[0]);
+        int wordsCounter = 0;
+        // getWordFromFile(input, &wordsCounter, inputPipe[1]);
+        write(inputPipe[1], "ciao", sizeof("ciao"));
+    }
+
     exit(0);
 }
