@@ -325,10 +325,16 @@ int selectNearId(int id) /* dato un nodo del grafo, seleziona il prossimo nodo i
         exit(1);
     }
 
-    float random = (float)rand() / (float)RAND_MAX; /* Simulo una variabile aleatoria continua uniforme in [0,1] */
-
     float prev = 0;
     int k = nodes[id].nearSize;
+
+    float sup = 0;
+    for (int j = 0; j < k; j++)
+    {
+        sup += (nodes[id]).edges[j].weight;
+    }
+
+    float random = (float)rand() / (float)(RAND_MAX / sup); /* Simulo una variabile aleatoria continua uniforme in [0,1] */
 
     for (int j = 0; j < k; j++)
     {
