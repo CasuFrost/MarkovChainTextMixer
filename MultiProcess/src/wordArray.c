@@ -99,7 +99,7 @@ void freeHashMap()
 void freeMatrix()
 {
     free(matrix);
-    printf("collisioni : %d\n", collisionCounter);
+    // printf("collisioni : %d\n", collisionCounter);
 }
 
 void printHashMap()

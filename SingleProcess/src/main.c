@@ -39,11 +39,21 @@ int main(int argc, char *argv[])
             break;
         case 'o':
             outputFile = malloc(strlen(optarg) + 1);
+            if (outputFile == NULL)
+            {
+                printf("errore nella malloc()\n");
+                exit(1);
+            }
             strcpy(outputFile, optarg);
             break;
         case 'i':
 
             inputFile = malloc(strlen(optarg) + 1);
+            if (inputFile == NULL)
+            {
+                printf("errore nella malloc()\n");
+                exit(1);
+            }
             strcpy(inputFile, optarg);
 
             break;

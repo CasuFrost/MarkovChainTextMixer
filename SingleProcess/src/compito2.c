@@ -15,7 +15,8 @@ void findSuccessive(char line[MAX_LINE_LENGHT], char successive[WORD_LENGHT]) /*
 {
 
     wordAndFreq *nextWords = malloc(0); /* Questo array conterrà tutte le parole candidate ad essere le successive, con le relative frequenze */
-    int nextWordsSize = 0;              /* Il numero di parole successive a quella corrente */
+
+    int nextWordsSize = 0; /* Il numero di parole successive a quella corrente */
 
     char tmp[WORD_LENGHT];
     int j = 0; /*L'index relativo del buffer che conterrà la parola letta*/

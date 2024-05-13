@@ -9,5 +9,3 @@ void prettyPrintWords(char **array_parole, int size);
 int checkIfWordInArray(char **array_parole, int size, char word[WORD_LENGHT]);
 
 int getWordArrayId(char **array_parole, int size, char word[WORD_LENGHT]);
-
-void addWordToWordArray(char **array_parole, int *wordsCounter, char *tmp);

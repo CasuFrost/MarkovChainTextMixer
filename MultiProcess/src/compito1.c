@@ -1,10 +1,10 @@
 #include "../headers/compito1.h"
 #include "../headers/ioOperation.h"
 #include "../headers/wordArray.h"
-
-char **getWordFromFile(char *fileName, int *numberOfWords, int inputPipe) /* Questa funzione prende come input il nome di un file, e restituisce
- un array di stringhe contenete le parole lette nel file.  prende come input anche un intero, che verrà
- aggiornato e conterrà il numero di parole*/
+#include <sys/wait.h>
+char **getWordFromFile(char *fileName, int *numberOfWords, int inputPipe, int endPipe) /* Questa funzione prende come input il nome di un file, e restituisce
+  un array di stringhe contenete le parole lette nel file.  prende come input anche un intero, che verrà
+  aggiornato e conterrà il numero di parole*/
 {
     int wordsCounter = 0;
     int fileSize;
@@ -19,7 +19,8 @@ char **getWordFromFile(char *fileName, int *numberOfWords, int inputPipe) /* Que
     /*Come prima parola, aggiungo il punto*/
     char punto[WORD_LENGHT] = ".";
 
-    addWord(&array_parole, &wordsCounter, punto); // Aggiungo la parola all'array
+    // addWord(&array_parole, &wordsCounter, punto); // Aggiungo la parola all'array
+    write(inputPipe, punto, WORD_LENGHT);
     char c;
 
     for (int i = 0; i < fileSize; i++)
@@ -38,8 +39,8 @@ char **getWordFromFile(char *fileName, int *numberOfWords, int inputPipe) /* Que
             if (j != 0)
             {
                 tmp[j] = '\0'; /* A questo punto 'tmp' contiene la parola letta, quindi aggiungo il simbolo di fine stringa*/
-
-                addWord(&array_parole, &wordsCounter, tmp); // Aggiungo la parola all'array
+                write(inputPipe, tmp, WORD_LENGHT);
+                // addWord(&array_parole, &wordsCounter, tmp); // Aggiungo la parola all'array
 
                 j = 0;
             }
@@ -52,8 +53,8 @@ char **getWordFromFile(char *fileName, int *numberOfWords, int inputPipe) /* Que
             {
                 tmp[j] = src[i];
                 tmp[j + 1] = '\0';
-
-                addWord(&array_parole, &wordsCounter, tmp); // Aggiungo la parola all'array
+                write(inputPipe, tmp, WORD_LENGHT);
+                // addWord(&array_parole, &wordsCounter, tmp); // Aggiungo la parola all'array
                 j = 0;
             }
             continue;
@@ -66,23 +67,24 @@ char **getWordFromFile(char *fileName, int *numberOfWords, int inputPipe) /* Que
                 /*trovato punto da solo*/
                 tmp[0] = src[i];
                 tmp[1] = '\0'; /* A questo punto 'tmp' contiene la parola letta, quindi aggiungo il simbolo di fine stringa*/
-
-                addWord(&array_parole, &wordsCounter, tmp); // Aggiungo la parola all'array
+                write(inputPipe, tmp, WORD_LENGHT);
+                // addWord(&array_parole, &wordsCounter, tmp); // Aggiungo la parola all'array
                 continue;
             }
             else
             {
                 // La parola attuale va salvata nel buffer
                 tmp[j] = '\0'; /* A questo punto 'tmp' contiene la parola letta, quindi aggiungo il simbolo di fine stringa*/
-
-                addWord(&array_parole, &wordsCounter, tmp); // Aggiungo la parola all'array
+                write(inputPipe, tmp, WORD_LENGHT);
+                // addWord(&array_parole, &wordsCounter, tmp); // Aggiungo la parola all'array
 
                 j = 0;
 
                 // Ora salvo il punto
                 tmp[0] = src[i];
                 tmp[1] = '\0';
-                addWord(&array_parole, &wordsCounter, tmp); // Aggiungo la parola all'array
+                write(inputPipe, tmp, WORD_LENGHT);
+                // addWord(&array_parole, &wordsCounter, tmp); // Aggiungo la parola all'array
                 continue;
             }
         }
@@ -92,9 +94,10 @@ char **getWordFromFile(char *fileName, int *numberOfWords, int inputPipe) /* Que
             {
                 // parola finita
                 tmp[j] = '\0'; /* A questo punto 'tmp' contiene la parola letta, quindi aggiungo il simbolo di fine stringa*/
-                printf("scrivo %s\n", tmp);
-                write(inputPipe, tmp, sizeof(tmp));
-                addWord(&array_parole, &wordsCounter, tmp); // Aggiungo la parola all'array
+                               // printf("scrivo %s\n", tmp);
+                write(inputPipe, tmp, WORD_LENGHT);
+
+                // addWord(&array_parole, &wordsCounter, tmp); // Aggiungo la parola all'array
 
                 j = 0;
             }
@@ -111,10 +114,11 @@ char **getWordFromFile(char *fileName, int *numberOfWords, int inputPipe) /* Que
     if (j != 0) /*Se l'ultima lettera è un carattere, la parola nel buffer non è stata ancora aggiunta all'array*/
     {
         tmp[j] = '\0'; /* A questo punto 'tmp' contiene la parola letta, quindi aggiungo il simbolo di fine stringa*/
-        write(inputPipe, tmp, sizeof(tmp));
-        addWord(&array_parole, &wordsCounter, tmp); // Aggiungo la parola all'array
-    }
 
+        write(inputPipe, tmp, WORD_LENGHT);
+        // addWord(&array_parole, &wordsCounter, tmp); // Aggiungo la parola all'array
+    }
+    write(endPipe, tmp, WORD_LENGHT);
     *numberOfWords = wordsCounter;
 
     return array_parole;
@@ -123,26 +127,67 @@ char **getWordFromFile(char *fileName, int *numberOfWords, int inputPipe) /* Que
 void compito1(char *input, char *output)
 {
     pid_t pid;
-    pid = fork();
     int inputPipe[2];
+    int endPipe[2];
     pipe(inputPipe);
+    pipe(endPipe);
 
+    fcntl(endPipe[0], F_SETFL, O_NONBLOCK);
+    fcntl(inputPipe[0], F_SETFL, O_NONBLOCK);
+
+    char usless[1];
+    char buf[WORD_LENGHT];
+
+    pid = fork();
     if (pid == 0)
     {
-        close(inputPipe[1]);
-        // Child
-        char buf[30];
-        // read(inputPipe[0], buf, 30);
-        // printf("%s\n", buf);
+        int wordsCounter = 0;
+        char **array_parole = malloc(0); // Questo array conterrà tutte le parole lette
+
+        while (1)
+        {
+            // close(inputPipe[1]);
+            //  Child
+            if (read(inputPipe[0], buf, WORD_LENGHT) == -1)
+            {
+                break;
+            }
+            addWord(&array_parole, &wordsCounter, buf); // Aggiungo la parola all'array
+            // printf("inserisco \"%s\" nell'array \n", buf);
+        }
+
+        initMatrix(wordsCounter); // Inizializzo la matrice con numero di righe e colonne identico al numero delle parole distinte lette nel file
+
+        fillMatrixWithWord(input, array_parole, wordsCounter); // Riempio i campi della matrice
+
+        pid_t pid2 = fork();
+
+        if (pid2 != 0)
+        {
+
+            printFrequence(array_parole, output); // Scrivo il file
+
+            //  Libero la memoria
+            freeHashMap();
+            freeMatrix();
+            free(array_parole);
+            printf("terminato processo che scrive il CSV\n");
+            printf("\nparole distinte nel testo : %d\n", wordsCounter); /* Per scrivere a schermo statistiche relative all'HashTable */
+            exit(0);
+        }
+        else
+        {
+            printf("terminato processo che crea la struttura\n");
+            exit(0);
+        }
     }
     else
     {
-        // Parent
-        // close(inputPipe[0]);
         int wordsCounter = 0;
-        // getWordFromFile(input, &wordsCounter, inputPipe[1]);
-        write(inputPipe[1], "ciao", sizeof("ciao"));
+        getWordFromFile(input, &wordsCounter, inputPipe[1], endPipe[1]);
+        printf("terminato processo che legge il file di testo\n");
+        int status;
+        wait(&status);
+        exit(0);
     }
-
-    exit(0);
 }

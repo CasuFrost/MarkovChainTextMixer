@@ -17,6 +17,7 @@
         "graphmaker.h": "c",
         "filereader2.h": "c",
         "hashtable.h": "c",
-        "string.h": "c"
+        "string.h": "c",
+        "wait.h": "c"
     }
 }

@@ -48,13 +48,3 @@ int getWordArrayId(char **array_parole, int size, char word[WORD_LENGHT]) /*rito
     }
     return -1;
 }
-
-void addWordToWordArray(char **array_parole, int *wordsCounter, char *tmp)
-{
-    // printf("\n%d", array_parole);
-    *wordsCounter = *wordsCounter + 1;
-    array_parole = realloc(array_parole, *wordsCounter * sizeof(char *)); // Aggiungo una stringa all'array di stringhe
-    array_parole[*wordsCounter - 1] = malloc(WORD_LENGHT);                // creo la stringa
-
-    strcpy(array_parole[*wordsCounter - 1], tmp); // Gli assegno il valore della parola letta
-}

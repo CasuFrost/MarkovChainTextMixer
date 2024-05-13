@@ -150,6 +150,13 @@ eseguire il controllo in tempo costante*/
         if (buckets[hashVal] == NULL)
         {
             buckets[hashVal] = malloc(sizeof(struct WordElement));
+
+            if (buckets[hashVal] == NULL)
+            {
+                printf("errore nella malloc()\n");
+                exit(1);
+            }
+
             buckets[hashVal]->id = k - 1;
             buckets[hashVal]->next = NULL;
             strcpy(buckets[hashVal]->word, word);
@@ -163,6 +170,13 @@ eseguire il controllo in tempo costante*/
                 tmp = tmp->next;
             }
             tmp->next = malloc(sizeof(struct WordElement));
+
+            if (tmp->next == NULL)
+            {
+                printf("errore nella malloc()\n");
+                exit(1);
+            }
+
             (tmp->next)->id = k - 1;
             (tmp->next)->next = NULL;
             strcpy((tmp->next)->word, word);
@@ -171,6 +185,13 @@ eseguire il controllo in tempo costante*/
         // Aggiungi all'array delle parole
         *array_parole = realloc(*array_parole, k * sizeof(char *));
         (*array_parole)[k - 1] = malloc(WORD_LENGHT);
+
+        if ((*array_parole)[k - 1] == NULL)
+        {
+            printf("errore nella malloc()\n");
+            exit(1);
+        }
+
         strcpy((*array_parole)[k - 1], word);
     }
 }
@@ -208,6 +229,11 @@ void initMatrix(int words) /* Inizializza la matrice che verrà utilizzata per s
     n = words;
 
     matrix = (int *)malloc(n * n * sizeof(int));
+    if (matrix == NULL)
+    {
+        printf("errore nella malloc()\n");
+        exit(1);
+    }
 
     for (int i = 0; i < n; i++)
     {

@@ -147,6 +147,11 @@ void createNode(char word[WORD_LENGHT])
     if (hashTable[hashVal] == NULL)
     {
         hashTable[hashVal] = malloc(sizeof(struct WordId));
+        if (hashTable[hashVal] == NULL)
+        {
+            printf("errore nella malloc()\n");
+            exit(1);
+        }
         hashTable[hashVal]->wordId = nodesSize;
         hashTable[hashVal]->next = NULL;
         strcpy(hashTable[hashVal]->word, word);
@@ -160,6 +165,11 @@ void createNode(char word[WORD_LENGHT])
             tmp = tmp->next;
         }
         tmp->next = malloc(sizeof(struct WordId));
+        if (tmp->next == NULL)
+        {
+            printf("errore nella malloc()\n");
+            exit(1);
+        }
         (tmp->next)->wordId = nodesSize;
         (tmp->next)->next = NULL;
         strcpy((tmp->next)->word, word);
@@ -356,7 +366,6 @@ sul grafo, scrive il contenuto sul file*/
 {
     FILE *fp;
     fp = fopen(fileName, "w+"); /*Apro il file di output*/
-    printf("dovremmo iniziare con %s\n", start);
     if (fp == NULL)
     {
         printf("Errore nell'apertura dei file.\n");
@@ -378,7 +387,7 @@ sul grafo, scrive il contenuto sul file*/
         }
     }
 
-    printf("inizieremo con %s\n", start);
+    printf("parola iniziale :  %s\n", start);
 
     int maiusc = 1;
 
