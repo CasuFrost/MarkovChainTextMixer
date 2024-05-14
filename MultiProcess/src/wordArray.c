@@ -65,6 +65,8 @@ int getWordIdFromHashMap(char word[WORD_LENGHT]) /* restituisce l'ID relativo al
     if (buckets[hashVal] == NULL)
     {
         printf("errore su %s indice : %d\n", word, hashVal);
+        // printf("HASMAP : \n");
+        // printHashMap();
         exit(1);
     }
     else

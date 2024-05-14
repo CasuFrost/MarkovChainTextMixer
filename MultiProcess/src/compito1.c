@@ -118,9 +118,10 @@ char **getWordFromFile(char *fileName, int *numberOfWords, int inputPipe, int en
         write(inputPipe, tmp, WORD_LENGHT);
         // addWord(&array_parole, &wordsCounter, tmp); // Aggiungo la parola all'array
     }
-    write(endPipe, tmp, WORD_LENGHT);
-    *numberOfWords = wordsCounter;
+    char us[1] = "a";
+    write(endPipe, us, 1);
 
+    *numberOfWords = wordsCounter;
     return array_parole;
 }
 
@@ -148,14 +149,21 @@ void compito1(char *input, char *output)
         {
             // close(inputPipe[1]);
             //  Child
-            if (read(inputPipe[0], buf, WORD_LENGHT) == -1)
+            int k = read(inputPipe[0], buf, WORD_LENGHT);
+            if (k == -1)
             {
-                break;
+                if (read(endPipe[0], usless, 1) != -1)
+                {
+                    break;
+                }
+                else
+                {
+                    continue;
+                }
             }
             addWord(&array_parole, &wordsCounter, buf); // Aggiungo la parola all'array
-            // printf("inserisco \"%s\" nell'array \n", buf);
         }
-
+        // printf("fine ciclo di ascolto\n");
         initMatrix(wordsCounter); // Inizializzo la matrice con numero di righe e colonne identico al numero delle parole distinte lette nel file
 
         fillMatrixWithWord(input, array_parole, wordsCounter); // Riempio i campi della matrice
