@@ -149,8 +149,7 @@ void compito1(char *input, char *output)
         {
             // close(inputPipe[1]);
             //  Child
-            int k = read(inputPipe[0], buf, WORD_LENGHT);
-            if (k == -1)
+            if (read(inputPipe[0], buf, WORD_LENGHT) == -1)
             {
                 if (read(endPipe[0], usless, 1) != -1)
                 {
