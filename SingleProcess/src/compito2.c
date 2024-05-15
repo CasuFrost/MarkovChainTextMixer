@@ -276,7 +276,7 @@ int compito2(char *input, char *output, char *numParole, char start[WORD_LENGHT]
         end = clock();
         cpu_time_used = ((double)(end - startTime)) / CLOCKS_PER_SEC;
 
-        printf("\nProgramma andato a buon fine, sono state scritte %s parole in %.4f secondi!\n\n", numParole, cpu_time_used);
+        printf("Programma andato a buon fine, sono state scritte %s parole in %.4f secondi!\n\n", numParole, cpu_time_used);
 
         exit(0);
     }

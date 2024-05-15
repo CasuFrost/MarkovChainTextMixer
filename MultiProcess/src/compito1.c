@@ -2,6 +2,11 @@
 #include "../headers/ioOperation.h"
 #include "../headers/wordArray.h"
 #include <sys/wait.h>
+
+clock_t startTime, end;
+
+double cpu_time_used;
+
 char **getWordFromFile(char *fileName, int *numberOfWords, int inputPipe, int endPipe) /* Questa funzione prende come input il nome di un file, e restituisce
   un array di stringhe contenete le parole lette nel file.  prende come input anche un intero, che verrà
   aggiornato e conterrà il numero di parole*/
@@ -19,7 +24,6 @@ char **getWordFromFile(char *fileName, int *numberOfWords, int inputPipe, int en
     /*Come prima parola, aggiungo il punto*/
     char punto[WORD_LENGHT] = ".";
 
-    // addWord(&array_parole, &wordsCounter, punto); // Aggiungo la parola all'array
     write(inputPipe, punto, WORD_LENGHT);
     char c;
 
@@ -40,7 +44,6 @@ char **getWordFromFile(char *fileName, int *numberOfWords, int inputPipe, int en
             {
                 tmp[j] = '\0'; /* A questo punto 'tmp' contiene la parola letta, quindi aggiungo il simbolo di fine stringa*/
                 write(inputPipe, tmp, WORD_LENGHT);
-                // addWord(&array_parole, &wordsCounter, tmp); // Aggiungo la parola all'array
 
                 j = 0;
             }
@@ -54,7 +57,7 @@ char **getWordFromFile(char *fileName, int *numberOfWords, int inputPipe, int en
                 tmp[j] = src[i];
                 tmp[j + 1] = '\0';
                 write(inputPipe, tmp, WORD_LENGHT);
-                // addWord(&array_parole, &wordsCounter, tmp); // Aggiungo la parola all'array
+
                 j = 0;
             }
             continue;
@@ -68,7 +71,7 @@ char **getWordFromFile(char *fileName, int *numberOfWords, int inputPipe, int en
                 tmp[0] = src[i];
                 tmp[1] = '\0'; /* A questo punto 'tmp' contiene la parola letta, quindi aggiungo il simbolo di fine stringa*/
                 write(inputPipe, tmp, WORD_LENGHT);
-                // addWord(&array_parole, &wordsCounter, tmp); // Aggiungo la parola all'array
+
                 continue;
             }
             else
@@ -76,7 +79,6 @@ char **getWordFromFile(char *fileName, int *numberOfWords, int inputPipe, int en
                 // La parola attuale va salvata nel buffer
                 tmp[j] = '\0'; /* A questo punto 'tmp' contiene la parola letta, quindi aggiungo il simbolo di fine stringa*/
                 write(inputPipe, tmp, WORD_LENGHT);
-                // addWord(&array_parole, &wordsCounter, tmp); // Aggiungo la parola all'array
 
                 j = 0;
 
@@ -84,7 +86,7 @@ char **getWordFromFile(char *fileName, int *numberOfWords, int inputPipe, int en
                 tmp[0] = src[i];
                 tmp[1] = '\0';
                 write(inputPipe, tmp, WORD_LENGHT);
-                // addWord(&array_parole, &wordsCounter, tmp); // Aggiungo la parola all'array
+
                 continue;
             }
         }
@@ -96,8 +98,6 @@ char **getWordFromFile(char *fileName, int *numberOfWords, int inputPipe, int en
                 tmp[j] = '\0'; /* A questo punto 'tmp' contiene la parola letta, quindi aggiungo il simbolo di fine stringa*/
                                // printf("scrivo %s\n", tmp);
                 write(inputPipe, tmp, WORD_LENGHT);
-
-                // addWord(&array_parole, &wordsCounter, tmp); // Aggiungo la parola all'array
 
                 j = 0;
             }
@@ -116,10 +116,10 @@ char **getWordFromFile(char *fileName, int *numberOfWords, int inputPipe, int en
         tmp[j] = '\0'; /* A questo punto 'tmp' contiene la parola letta, quindi aggiungo il simbolo di fine stringa*/
 
         write(inputPipe, tmp, WORD_LENGHT);
-        // addWord(&array_parole, &wordsCounter, tmp); // Aggiungo la parola all'array
     }
+
     char us[1] = "a";
-    write(endPipe, us, 1);
+    write(endPipe, us, 1); /*Quando il processo padreha finito di leggere il file, lo notifica scrivendo sulla pipe 'endPipe' */
 
     *numberOfWords = wordsCounter;
     return array_parole;
@@ -127,6 +127,7 @@ char **getWordFromFile(char *fileName, int *numberOfWords, int inputPipe, int en
 
 void compito1(char *input, char *output)
 {
+    startTime = clock();
     pid_t pid;
     int inputPipe[2];
     int endPipe[2];
@@ -145,14 +146,13 @@ void compito1(char *input, char *output)
         int wordsCounter = 0;
         char **array_parole = malloc(0); // Questo array conterrà tutte le parole lette
 
-        while (1)
+        while (1) /* il processo figlio riceve le parole finche il processo padre le invia tramite la pipe*/
         {
-            // close(inputPipe[1]);
-            //  Child
             if (read(inputPipe[0], buf, WORD_LENGHT) == -1)
             {
                 if (read(endPipe[0], usless, 1) != -1)
                 {
+                    /*Quando il processo padreha finito di leggere il file, lo notifica scrivendo sulla pipe 'endPipe' */
                     break;
                 }
                 else
@@ -160,9 +160,9 @@ void compito1(char *input, char *output)
                     continue;
                 }
             }
-            addWord(&array_parole, &wordsCounter, buf); // Aggiungo la parola all'array
+            addWord(&array_parole, &wordsCounter, buf); // Aggiungo la parola letta dalla pipe all'array
         }
-        // printf("fine ciclo di ascolto\n");
+
         initMatrix(wordsCounter); // Inizializzo la matrice con numero di righe e colonne identico al numero delle parole distinte lette nel file
 
         fillMatrixWithWord(input, array_parole, wordsCounter); // Riempio i campi della matrice
@@ -179,7 +179,11 @@ void compito1(char *input, char *output)
             freeMatrix();
             free(array_parole);
             printf("terminato processo che scrive il CSV\n");
-            printf("\nparole distinte nel testo : %d\n", wordsCounter); /* Per scrivere a schermo statistiche relative all'HashTable */
+            printf("parole distinte nel testo : %d\n", wordsCounter); /* Per scrivere a schermo statistiche relative all'HashTable */
+
+            end = clock();
+            cpu_time_used = ((double)(end - startTime)) / CLOCKS_PER_SEC;
+            printf("programma andato a buon fine in %.4f secondi.\n\n", cpu_time_used);
             exit(0);
         }
         else

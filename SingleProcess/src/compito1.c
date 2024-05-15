@@ -147,6 +147,6 @@ int compito1(char *input, char *output)
 
     end = clock();
     cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
-    printf("Programma andato a buon fine in %.2f secondi!\n", cpu_time_used);
+    printf("Programma andato a buon fine in %.2f secondi!\n\n", cpu_time_used);
     exit(0);
 }

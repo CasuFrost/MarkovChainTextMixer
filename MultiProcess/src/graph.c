@@ -412,7 +412,7 @@ sul grafo, scrive il contenuto sul file*/
         words--;
     }
     // printHashTable();
-    printf("collisioni : %d\n", collisionsCounter);
+    // printf("collisioni : %d\n", collisionsCounter);
     freeGraphStructures(); /* Libero le strutture del grafo che ho allocato */
     fclose(fp);
 }
