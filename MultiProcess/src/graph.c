@@ -174,8 +174,9 @@ int getIdFromWordHasMap(char word[WORD_LENGHT])
     int hashVal = hash(word);
     if (hashTable[hashVal] == NULL)
     {
+        return -1;
         printf("errore su %s indice : %d\n", word, hashVal);
-        exit(1);
+        // exit(1);
     }
     else
     {
@@ -353,7 +354,6 @@ sul grafo, scrive il contenuto sul file*/
 {
     FILE *fp;
     fp = fopen(fileName, "w+"); /*Apro il file di output*/
-
     if (fp == NULL)
     {
         printf("Errore nell'apertura dei file.\n");
@@ -370,14 +370,26 @@ sul grafo, scrive il contenuto sul file*/
         }
         else
         {
-            printf("La parola che hai inserito, non è presente nel testo!\n");
+            printf("La parola che hai inserito, ossia %s non è presente nel testo!\n", start);
             exit(1);
         }
     }
 
-    int id = selectNearId(getIdFromWordHasMap(start));
+    printf("parola iniziale :  %s\n", start);
 
     int maiusc = 1;
+
+    if (!((strcmp(start, "!") == 0) || (strcmp(start, "?") == 0) || (strcmp(start, ".") == 0)))
+    {
+        char tmp[WORD_LENGHT];
+        start[0] -= 32;
+        fprintf(fp, "%s ", start);
+        start[0] += 32;
+        maiusc = 0;
+    }
+
+    int id = selectNearId(getIdFromWordHasMap(start));
+
     char tmp[WORD_LENGHT];
 
     while (words > 0)

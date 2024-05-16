@@ -68,7 +68,6 @@ void compito2(char *input, char *output, char *numParole, char start[WORD_LENGHT
  parole), la seconda, crea un grafo pesato leggendo il CSV, e poi opera sul grafo, l'operazione di creazione del grafo è dispendiosa, ma poi sarà rapido scrivere sul file di output,
  per questo se le parole son poche verrà effettuato il processo con la prima versione, se invece son tante, verrà creato il grafo.*/
 {
-
     srand(time(NULL));
     int Input_Graph_Pipe[2];
     int nextStep_Pipe[2];
