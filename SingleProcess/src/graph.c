@@ -357,7 +357,7 @@ int selectNearId(int id) /* dato un nodo del grafo, seleziona il prossimo nodo i
         }
         prev += (nodes[id]).edges[j].weight;
     }
-    printf("DIOCAN\n");
+    
     // return (nodes[id]).edges[k - 1].node->nodeId; /* Dati gli errori di approssimazione, la somma di tutte le frequenze potrebbe essere minore di 1 */
 }
 
