@@ -1,0 +1,9 @@
+{
+    "files.associations": {
+        "wordarray.h": "c",
+        "filereader2.h": "c",
+        "compito1.h": "c",
+        "compito1_multi.h": "c",
+        "rootheader.h": "c"
+    }
+}

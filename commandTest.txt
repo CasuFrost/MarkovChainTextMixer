@@ -1,33 +1,31 @@
-./singleProcess  -1 -i testFile/harrypotter.txt -o OUTPUT/CSV/harrypotter.csv 
-./singleProcess  -1 -i testFile/commedia.txt -o OUTPUT/CSV/commedia.csv 
-./singleProcess  -1 -i testFile/lotr.txt -o OUTPUT/CSV/lotr.csv 
-./singleProcess  -1 -i testFile/misto.txt -o OUTPUT/CSV/misto.csv 
-./singleProcess  -1 -i testFile/informatica.txt -o OUTPUT/CSV/informatica.csv 
-./singleProcess  -1 -i testFile/10kWords.txt -o OUTPUT/CSV/10kWords.csv 
-./singleProcess  -1 -i testFile/2MB.txt -o OUTPUT/CSV/2MB.csv 
+./MCtextMixer -1 -i testFile/harrypotter.txt -o OUTPUT/CSV/harrypotter.csv 
+./MCtextMixer -1 -i testFile/commedia.txt -o OUTPUT/CSV/commedia.csv 
+./MCtextMixer -1 -i testFile/lotr.txt -o OUTPUT/CSV/lotr.csv 
+./MCtextMixer -1 -i testFile/misto.txt -o OUTPUT/CSV/misto.csv 
+./MCtextMixer -1 -i testFile/informatica.txt -o OUTPUT/CSV/informatica.csv 
+./MCtextMixer -1 -i testFile/10kWords.txt -o OUTPUT/CSV/10kWords.csv 
+./MCtextMixer -1 -i testFile/2MB.txt -o OUTPUT/CSV/2MB.csv 
 
-./singleProcess  -2 -o OUTPUT/randomTxt/commedia.txt  -i OUTPUT/CSV/commedia.csv -n 900
-./singleProcess  -2 -o OUTPUT/randomTxt/10kWords.txt  -i OUTPUT/CSV/10kWords.csv -n 900
-./singleProcess  -2 -o OUTPUT/randomTxt/lotr.txt  -i OUTPUT/CSV/lotr.csv -n 900
-./singleProcess  -2 -o OUTPUT/randomTxt/harrypotter.txt  -i OUTPUT/CSV/harrypotter.csv -n 900
-./singleProcess  -2 -o OUTPUT/randomTxt/misto.txt  -i OUTPUT/CSV/misto.csv -n 900
-./singleProcess  -2 -o OUTPUT/randomTxt/2MB.txt  -i OUTPUT/CSV/2MB.csv -n 900
-./singleProcess  -2 -o OUTPUT/randomTxt/informatica.txt  -i OUTPUT/CSV/informatica.csv -n 900
+./MCtextMixer -2 -o OUTPUT/randomTxt/commedia.txt  -i OUTPUT/CSV/commedia.csv -n 900
+./MCtextMixer -2 -o OUTPUT/randomTxt/10kWords.txt  -i OUTPUT/CSV/10kWords.csv -n 900
+./MCtextMixer -2 -o OUTPUT/randomTxt/lotr.txt  -i OUTPUT/CSV/lotr.csv -n 900
+./MCtextMixer -2 -o OUTPUT/randomTxt/harrypotter.txt  -i OUTPUT/CSV/harrypotter.csv -n 900
+./MCtextMixer -2 -o OUTPUT/randomTxt/misto.txt  -i OUTPUT/CSV/misto.csv -n 900
+./MCtextMixer -2 -o OUTPUT/randomTxt/2MB.txt  -i OUTPUT/CSV/2MB.csv -n 900
+./MCtextMixer -2 -o OUTPUT/randomTxt/informatica.txt  -i OUTPUT/CSV/informatica.csv -n 900
 
+./MCtextMixer -1 -i testFile/harrypotter.txt -o OUTPUT/CSV/harrypotter.csv -m
+./MCtextMixer -1 -i testFile/commedia.txt -o OUTPUT/CSV/commedia.csv -m
+./MCtextMixer -1 -i testFile/lotr.txt -o OUTPUT/CSV/lotr.csv -m
+./MCtextMixer -1 -i testFile/misto.txt -o OUTPUT/CSV/misto.csv -m
+./MCtextMixer -1 -i testFile/informatica.txt -o OUTPUT/CSV/informatica.csv -m
+./MCtextMixer -1 -i testFile/10kWords.txt -o OUTPUT/CSV/10kWords.csv -m
+./MCtextMixer -1 -i testFile/2MB.txt -o OUTPUT/CSV/2MB.csv -m
 
-./multiProcess  -1 -i testFile/harrypotter.txt -o OUTPUT/CSV/harrypotter.csv 
-./multiProcess  -1 -i testFile/commedia.txt -o OUTPUT/CSV/commedia.csv 
-./multiProcess  -1 -i testFile/lotr.txt -o OUTPUT/CSV/lotr.csv 
-./multiProcess  -1 -i testFile/misto.txt -o OUTPUT/CSV/misto.csv 
-./multiProcess  -1 -i testFile/informatica.txt -o OUTPUT/CSV/informatica.csv 
-./multiProcess  -1 -i testFile/10kWords.txt -o OUTPUT/CSV/10kWords.csv 
-./multiProcess  -1 -i testFile/2MB.txt -o OUTPUT/CSV/2MB.csv 
-
-
-./multiProcess  -2 -o OUTPUT/randomTxt/commedia.txt  -i OUTPUT/CSV/commedia.csv -n 900
-./multiProcess  -2 -o OUTPUT/randomTxt/10kWords.txt  -i OUTPUT/CSV/10kWords.csv -n 900
-./multiProcess  -2 -o OUTPUT/randomTxt/lotr.txt  -i OUTPUT/CSV/lotr.csv -n 900
-./multiProcess  -2 -o OUTPUT/randomTxt/harrypotter.txt  -i OUTPUT/CSV/harrypotter.csv -n 900
-./multiProcess  -2 -o OUTPUT/randomTxt/misto.txt  -i OUTPUT/CSV/misto.csv -n 900
-./multiProcess  -2 -o OUTPUT/randomTxt/2MB.txt  -i OUTPUT/CSV/2MB.csv -n 900
-./multiProcess  -2 -o OUTPUT/randomTxt/informatica.txt  -i OUTPUT/CSV/informatica.csv -n 900
+./MCtextMixer -2 -o OUTPUT/randomTxt/commedia.txt  -i OUTPUT/CSV/commedia.csv -n 900 -m
+./MCtextMixer -2 -o OUTPUT/randomTxt/10kWords.txt  -i OUTPUT/CSV/10kWords.csv -n 900 -m
+./MCtextMixer -2 -o OUTPUT/randomTxt/lotr.txt  -i OUTPUT/CSV/lotr.csv -n 900 -m
+./MCtextMixer -2 -o OUTPUT/randomTxt/harrypotter.txt  -i OUTPUT/CSV/harrypotter.csv -n 900 -m
+./MCtextMixer -2 -o OUTPUT/randomTxt/misto.txt  -i OUTPUT/CSV/misto.csv -n 900 -m
+./MCtextMixer -2 -o OUTPUT/randomTxt/2MB.txt  -i OUTPUT/CSV/2MB.csv -n 900 -m
+./MCtextMixer -2 -o OUTPUT/randomTxt/informatica.txt  -i OUTPUT/CSV/informatica.csv -n 900 -m
