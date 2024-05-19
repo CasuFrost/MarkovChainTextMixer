@@ -2,7 +2,7 @@
 
 /*Questo file contiene alcune funzioni sul controllo e la modifica delle stringhe o dei caratteri*/
 
-void minuscolaStringa(char *s);
+void lowerCase(char *s);
 
 void prettyPrintWords(char **array_parole, int size);
 

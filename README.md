@@ -2,16 +2,13 @@
 
 ## Utilizzo
 
-Dentro la directory sorgente, sono contenute due directory, rispettivamente 
-- MultiProcess 
-- SingleProcess 
+Dentro la directory sorgente, è contenuta la directory 'DoubleVersion', contenente l'eseguibile del programma
 
 Dentro tali directory, sono contenuti i rispettivi eseguibili : 
 
-- MultiProcess/multiProcess
-- MultiProcess/singleProcess
+DoubleVersion/MCtextMixer
 
-Si apra la linea di comando, spostandosi nella cartella in cui è presente uno dei due eseguibili (a seconda della volontà di voler utilizzare la versione a singolo processo, oppure la versione multiprocesso).
+Si apra la linea di comando, spostandosi nella cartella in cui è presente il file eseguibile
 
 
 ---
@@ -19,17 +16,21 @@ Si apra la linea di comando, spostandosi nella cartella in cui è presente uno d
 
 ### Comandi 
 
-compito 1 : ```./singleProcess  -1 -i [input file] -o [output file]  ```
+compito 1 : ```./MCtextMixer-1 -i [input file] -o [output file]  -m```
 
-compito 2 : ``` ./singleProcess  -2 -o [output file] -i [input file] -n [numero parole] -s[parola iniziale] ```
+compito 2 : ``` ./MCtextMixer-2 -o [output file] -i [input file] -n [numero parole] -s[parola iniziale]  -m```
 
-Tutti i comandi sono obbligatori, escluso il comando ``` -s ```.
+Tutti i comandi sono obbligatori, escluso il comando ``` -s ``` ed il comando ``` -m ```.
 
 Esempio di utilizzo del programma :
 
-```./singleProcess  -1 -i testFile/commedia.txt -o OUTPUT/CSV/commedia.csv  ```
+```./MCtextMixer-1 -i testFile/commedia.txt -o OUTPUT/CSV/commedia.csv  ```
 
-``` ./singleProcess  -2 -o OUTPUT/randomTxt/commedia.txt  -i OUTPUT/CSV/commedia.csv -n 100000 ```
+``` ./MCtextMixer-2 -o OUTPUT/randomTxt/commedia.txt  -i OUTPUT/CSV/commedia.csv -n 100000 ```
+
+```./MCtextMixer-1 -i testFile/commedia.txt -o OUTPUT/CSV/commedia.csv  -m```
+
+``` ./MCtextMixer-2 -o OUTPUT/randomTxt/commedia.txt  -i OUTPUT/CSV/commedia.csv -n 100000 -s selva```
 
 ---
 
@@ -49,4 +50,6 @@ generazione casuale del testo a partire da un file CSV contenete le frequenze. T
 ``` -s ``` Specifica la parola che verrà utilizzata come punto di partenza nel compito 2, 
 è necessario che la parola sia presente nel file CSV. La parola specificata deve essere 
 necessariamente minuscola.
+
+``` -m ``` Se presente, verrà eseguita la versione multi processo del programma, altrimenti, verrà eseguita la versione con un solo processo.
 

@@ -1,5 +1,6 @@
 #include "../headers/rootHeader.h"
 #include "../headers/graph.h"
+#include "../headers/stringOpertion.h"
 #include "../headers/hashTable.h"
 
 struct Node
@@ -375,6 +376,8 @@ sul grafo, scrive il contenuto sul file*/
         printf("Errore nell'apertura dei file.\n");
         exit(1);
     }
+
+    lowerCase(start);
 
     int firstWord = 0; /* Questa variabile serve esclusivamente ad indicare quando o no andare a capo*/
 

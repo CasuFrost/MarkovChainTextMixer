@@ -3,7 +3,7 @@
 
 /*Questo file contiene alcune funzioni sul controllo e la modifica delle stringhe o dei caratteri*/
 
-void minuscolaStringa(char *s)
+void lowerCase(char *s)
 {
     for (int i = 0; i < WORD_LENGHT; i++)
     {

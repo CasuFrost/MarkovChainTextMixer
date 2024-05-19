@@ -141,7 +141,7 @@ eseguire il controllo in tempo costante*/
 {
     // printf("%s\n", word);
     int k = *counter;
-    minuscolaStringa(word);
+    lowerCase(word);
     if (!checkIfWordInHashMap(word)) /*Controlla se la parola non è già nell'array*/
     {
 
@@ -267,7 +267,7 @@ void fillMatrixWithWord(char *fileName, char **array_parole, int wordsCounter)
             {
 
                 currentWord[j] = '\0';
-                minuscolaStringa(currentWord);
+                lowerCase(currentWord);
                 currentId = getWordIdFromHashMap(currentWord);
                 previousId = getWordIdFromHashMap(previousWord);
 
@@ -283,7 +283,7 @@ void fillMatrixWithWord(char *fileName, char **array_parole, int wordsCounter)
             {
                 currentWord[j] = src[i];
                 currentWord[j + 1] = '\0';
-                minuscolaStringa(currentWord);
+                lowerCase(currentWord);
 
                 currentId = getWordIdFromHashMap(currentWord);
                 previousId = getWordIdFromHashMap(previousWord);
@@ -313,7 +313,7 @@ void fillMatrixWithWord(char *fileName, char **array_parole, int wordsCounter)
             else
             {
                 currentWord[j] = '\0';
-                minuscolaStringa(currentWord);
+                lowerCase(currentWord);
 
                 currentId = getWordIdFromHashMap(currentWord);
                 previousId = getWordIdFromHashMap(previousWord);
@@ -342,7 +342,7 @@ void fillMatrixWithWord(char *fileName, char **array_parole, int wordsCounter)
             {
 
                 currentWord[j] = '\0'; /* A questo punto 'tmp' contiene la parola letta, quindi aggiungo il simbolo di fine stringa*/
-                minuscolaStringa(currentWord);
+                lowerCase(currentWord);
 
                 currentId = getWordIdFromHashMap(currentWord);
 
@@ -364,7 +364,7 @@ void fillMatrixWithWord(char *fileName, char **array_parole, int wordsCounter)
     if (j != 0) /*Se l'ultima lettera è un carattere, la parola nel buffer non è stata ancora aggiunta all'array*/
     {
         currentWord[j] = '\0'; /* A questo punto 'tmp' contiene la parola letta, quindi aggiungo il simbolo di fine stringa*/
-        minuscolaStringa(currentWord);
+        lowerCase(currentWord);
 
         currentId = getWordIdFromHashMap(currentWord);
         previousId = getWordIdFromHashMap(previousWord);
