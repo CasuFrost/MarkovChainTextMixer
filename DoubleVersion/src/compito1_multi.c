@@ -3,13 +3,11 @@
 #include "../headers/wordArray.h"
 #include <sys/wait.h>
 
-clock_t startTime, end;
-
 double cpu_time_used;
+clock_t startTime, end; // variabili utilizzate per calcolare il tempo di esecuzione del programma
 
-char **getWordFromFile_multi(char *fileName, int *numberOfWords, int inputPipe, int endPipe) /* Questa funzione prende come input il nome di un file, e restituisce
-  un array di stringhe contenete le parole lette nel file.  prende come input anche un intero, che verrà
-  aggiornato e conterrà il numero di parole*/
+char **getWordFromFile_multi(char *fileName, int *numberOfWords, int inputPipe, int endPipe) /* Questa funzione prende come input il nome di un file, ed invia sulla pipe
+le parole lette all'interno del file*/
 {
     int wordsCounter = 0;
     int fileSize;
@@ -67,9 +65,9 @@ char **getWordFromFile_multi(char *fileName, int *numberOfWords, int inputPipe, 
         {
             if (j == 0)
             {
-                /*trovato punto da solo*/
+                /*trovato un punto da solo*/
                 tmp[0] = src[i];
-                tmp[1] = '\0'; /* A questo punto 'tmp' contiene la parola letta, quindi aggiungo il simbolo di fine stringa*/
+                tmp[1] = '\0'; /* A questo punto del codice, 'tmp' contiene la parola letta, quindi aggiungo il simbolo di fine stringa*/
                 write(inputPipe, tmp, WORD_LENGHT);
 
                 continue;
@@ -119,7 +117,7 @@ char **getWordFromFile_multi(char *fileName, int *numberOfWords, int inputPipe, 
     }
 
     char us[1] = "a";
-    write(endPipe, us, 1); /*Quando il processo padreha finito di leggere il file, lo notifica scrivendo sulla pipe 'endPipe' */
+    write(endPipe, us, 1); /*Quando il processo padre ha finito di leggere il file, notifica il figlio scrivendo sulla pipe 'endPipe' */
 
     *numberOfWords = wordsCounter;
     return array_parole;
@@ -129,22 +127,23 @@ void compito1_multi(char *input, char *output)
 {
     startTime = clock();
     pid_t pid;
-    int inputPipe[2];
-    int endPipe[2];
+    int inputPipe[2]; /* pipe utilizzata per lo scambio delle parole del file*/
+    int endPipe[2];   /*pipe utilizzata dal padre per notificare al figlio di aver finito di leggere il file*/
     pipe(inputPipe);
     pipe(endPipe);
 
     fcntl(endPipe[0], F_SETFL, O_NONBLOCK);
     fcntl(inputPipe[0], F_SETFL, O_NONBLOCK);
 
-    char usless[1];
-    char buf[WORD_LENGHT];
+    char usless[1];        /*Questo buffer serve esclusivamente per il controllo della pipe 'endPipe' */
+    char buf[WORD_LENGHT]; /*Questo buffer conterrà le parole lette dalla pipe*/
 
     pid = fork();
     if (pid == 0)
     {
-        int wordsCounter = 0;
-        char **array_parole = malloc(0); // Questo array conterrà tutte le parole lette
+        int wordsCounter = 0; /*Questa variabile conterrà il numero di parole distinte contenute nel file*/
+
+        char **array_parole = malloc(0); /* Questo array conterrà tutte le parole distinte contenute nel file*/
 
         while (1) /* il processo figlio riceve le parole finche il processo padre le invia tramite la pipe*/
         {
@@ -167,12 +166,14 @@ void compito1_multi(char *input, char *output)
 
         fillMatrixWithWord(input, array_parole, wordsCounter); // Riempio i campi della matrice
 
+        /*A questo punto, avendo la struttura, faccio si che un terzo processo figlio la utilizzi per scrivere il file CSV*/
+
         pid_t pid2 = fork();
 
         if (pid2 != 0)
         {
 
-            printFrequence(array_parole, output); // Scrivo il file
+            printFrequence(array_parole, output); // Creo il file
 
             //  Libero la memoria
             freeHashMap();

@@ -1,1 +1,1 @@
-l'altro giorno
+L’obiettivo è implementare un programma ANSI C

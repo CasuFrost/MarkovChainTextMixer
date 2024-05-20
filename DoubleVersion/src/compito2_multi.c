@@ -16,7 +16,8 @@ struct Edge
     float weight;
 };
 
-void readStringReciviedFromPipe(char readbuffer[WORD_LENGHT])
+void readStringReciviedFromPipe(char readbuffer[WORD_LENGHT]) /*Questa funzione, legge le stringhe del file CSV, ne estrapola i dati necessari
+ per creare gli archi del grafo*/
 {
 
     int j = 0;
@@ -60,8 +61,6 @@ void readStringReciviedFromPipe(char readbuffer[WORD_LENGHT])
     freq[j] = '\0';
 
     createEdgeFromWord(atoi(num), tmp, atof(freq));
-    // printf("*** || %s *** ||\n", readbuffer);
-    //  printf("*** || %d %s %f *** ||\n", atoi(num), tmp, atof(freq));
 }
 
 void compito2_multi(char *input, char *output, char *numParole, char start[WORD_LENGHT]) /* Esistono due versioni del programma, la prima, opera direttamente sul file (efficente per creare poche
@@ -148,10 +147,4 @@ void compito2_multi(char *input, char *output, char *numParole, char start[WORD_
         }
         exit(0);
     }
-}
-
-void handle_sigusr1(int sig)
-{
-    printf("segnale ricevuto!\n");
-    exit(0);
 }

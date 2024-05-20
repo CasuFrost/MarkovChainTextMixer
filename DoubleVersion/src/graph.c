@@ -30,7 +30,7 @@ int collisionsCounter = 0;
 int nodesSize = 0;
 struct Node *nodes;
 
-void printHashTable()
+void printHashTable() /*Per scrivere a schermo la hash table*/
 {
     for (int i = 0; i < HASHSIZE; i++)
     {
@@ -51,30 +51,7 @@ void printHashTable()
     }
 }
 
-void addNearId(int nodeFrom, int nodeTo, float w)
-{
-    nodes[nodeFrom].nearSize++;
-    if (nodes[nodeFrom].nearSize == 1)
-    {
-        nodes[nodeFrom].edges = calloc(1, (sizeof(struct Edge)));
-    }
-    else
-    {
-        nodes[nodeFrom].edges = realloc(nodes[nodeFrom].edges, nodes[nodeFrom].nearSize * (sizeof(struct Edge)));
-    }
-
-    if (nodes[nodeFrom].edges == NULL)
-    {
-        printf("errore nell'allocazione della memoria\n");
-        exit(1);
-    }
-
-    struct Edge e = {&(nodes[nodeTo]), w};
-
-    nodes[nodeFrom].edges[nodes[nodeFrom].nearSize - 1] = e;
-}
-
-void addNear(struct Node *nodeFrom, struct Node *nodeTo, float w)
+void addNear(struct Node *nodeFrom, struct Node *nodeTo, float w) /*Questa funzione crea un arco pesato diretto fra i due nodi dati in input*/
 {
     nodeFrom->nearSize++;
     if (nodeFrom->nearSize == 1)
@@ -100,12 +77,6 @@ void addNear(struct Node *nodeFrom, struct Node *nodeTo, float w)
     nodeFrom->edges[nodeFrom->nearSize - 1] = e;
 }
 
-void createEdge(struct Node *node1, struct Node *node2, float w)
-{
-    addNear(node1, node2, w);
-    // addNear(node2, node1, w);
-}
-
 void printGraph()
 {
     for (int i = 0; i < nodesSize; i++)
@@ -119,7 +90,7 @@ void printGraph()
     }
 }
 
-void createNode(char word[WORD_LENGHT])
+void createNode(char word[WORD_LENGHT]) /*Questa funzione, data una parola in input, crea un nodo, che ha come chiave proprio quella parola*/
 {
     struct Node newNode;
     strcpy(newNode.word, word);
@@ -145,7 +116,7 @@ void createNode(char word[WORD_LENGHT])
 
     // Add word in hashMap
     int hashVal = hash(word);
-    if (hashTable[hashVal] == NULL)
+    if (hashTable[hashVal] == NULL) /*Tramite l'hashmap, si controlla che la parola non sia già nel grafo*/
     {
         hashTable[hashVal] = malloc(sizeof(struct WordId));
         if (hashTable[hashVal] == NULL)
@@ -175,19 +146,17 @@ void createNode(char word[WORD_LENGHT])
         (tmp->next)->next = NULL;
         strcpy((tmp->next)->word, word);
     }
-    // Add word in hashMap
 
     nodesSize++;
 }
 
-int getIdFromWordHasMap(char word[WORD_LENGHT])
+int getIdFromWordHasMap(char word[WORD_LENGHT]) /*Questa funzione data una parole, ne restituisce l'ID*/
 {
     int hashVal = hash(word);
     if (hashTable[hashVal] == NULL)
     {
-        // printf("errore su %s indice : %d\n", word, hashVal);
+        printf("errore su %s indice : %d\n", word, hashVal);
         return -1;
-        // exit(1);
     }
     else
     {
@@ -208,24 +177,7 @@ int getIdFromWordHasMap(char word[WORD_LENGHT])
     return -1;
 }
 
-int searchIdFromWord(char word[WORD_LENGHT]) /* Questa funzione  data una parola restituisce l'ID (la posizione nell'array) del nodo con quella parola*/
-{
-    for (int i = 0; i < nodesSize; i++)
-    {
-        if (strcmp(nodes[i].word, word) == 0)
-        {
-            if (i != getIdFromWordHasMap(word))
-            {
-                printf("indici diversi\n");
-                exit(1);
-            }
-            return i;
-        }
-    }
-    return -1;
-}
-
-void createEdgeFromWord(int id1, char word2[WORD_LENGHT], float w)
+void createEdgeFromWord(int id1, char word2[WORD_LENGHT], float w) /*Dato l'ID di un nodo ed una parola rappresentante un nodo, viene creato un arco*/
 {
 
     int id2 = getIdFromWordHasMap(word2);
@@ -234,10 +186,14 @@ void createEdgeFromWord(int id1, char word2[WORD_LENGHT], float w)
     {
         return;
     }
-    createEdge(&nodes[id1], &nodes[id2], w);
+    addNear(&nodes[id1], &nodes[id2], w);
 }
 
-void createGraphFromFile(char *fileName)
+void createGraphFromFile(char *fileName) /*Dato in input un file CSV, crea un grafo dove
+i vertici sono le parole del file CSV
+c'è un arco di peso 'w' da 'x' ad 'y' se la parola 'y' segue 'x' con una frequenza 'w'
+
+*/
 {
 
     int wordCounter = 0;
@@ -296,7 +252,6 @@ void createGraphFromFile(char *fileName)
             nodeTo[i] = line[i];
             i++;
         }
-        // printf("%s\n", nodeTo);
 
         i++;
 
@@ -363,7 +318,8 @@ int selectNearId(int id) /* dato un nodo del grafo, seleziona il prossimo nodo i
         }
         prev += (nodes[id]).edges[j].weight;
     }
-    // return (nodes[id]).edges[k - 1].node->nodeId; /* Dati gli errori di approssimazione, la somma di tutte le frequenze potrebbe essere minore di 1 */
+
+    return (nodes[id]).edges[k - 1].node->nodeId; /* Dati gli errori di approssimazione, la somma di tutte le frequenze potrebbe essere minore di 1 */
 }
 
 void writeOnFile(char *fileName, int words, char start[WORD_LENGHT]) /*Questa funzione legge il grafo contenente le parole e le frequenze, ed eseguendo una passeggiata

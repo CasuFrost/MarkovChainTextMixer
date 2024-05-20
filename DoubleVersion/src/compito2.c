@@ -77,8 +77,6 @@ void findSuccessive(char line[MAX_LINE_LENGHT], char successive[WORD_LENGHT]) /*
 
                 nextWords[nextWordsSize - 1] = new;
 
-                // printf("parola: %s freq : %f\n", tmp, frequenza);
-
                 j = 0;
                 continue;
             }
@@ -134,14 +132,12 @@ void findSuccessive(char line[MAX_LINE_LENGHT], char successive[WORD_LENGHT]) /*
 
         if (random >= nextWords[i].minRange && random <= nextWords[i].maxRange)
         {
-            // printf("--%s--\n", nextWords[i].word);
             strcpy(successive, nextWords[i].word);
             free(nextWords);
             return;
         }
     }
     printf("fuori dal range con %f\n, il limite destro è %f", random, nextWords[nextWordsSize - 1].maxRange);
-    // printf("\n\nla linea è: \n%s\n la parola selezionata è %s\n\n", line, nextWords[0].word);
     strcpy(successive, nextWords[0].word);
     free(nextWords);
     return;
@@ -156,8 +152,6 @@ selezionarne una successiva ripetendo ricorsivamente il procedimento, finché no
     {
         return;
     }
-
-    // char line[MAX_LINE_LENGHT]; /* in questo buffer, inserirò la linea corrente letta dal file */
 
     while (fgets(line, MAX_LINE_LENGHT, fp)) // Leggo il file riga per riga
     {
@@ -247,61 +241,34 @@ int compito2(char *input, char *output, char *numParole, char start[WORD_LENGHT]
         exit(1);
     }
 
-    if (1) // Compito nuovo
+    /*Generazione di un punto di partenza casuale*/
+    if (strcmp(start, ".") == 0)
     {
 
-        /*Generazione di un punto di partenza casuale*/
-        if (strcmp(start, ".") == 0)
+        int r = rand() % 3;
+
+        switch (r)
         {
-
-            int r = rand() % 3;
-
-            switch (r)
-            {
-            case 0:
-                strcpy(start, ".");
-                break;
-            case 1:
-                strcpy(start, "!");
-                break;
-            case 2:
-                strcpy(start, "?");
-                break;
-            }
+        case 0:
+            strcpy(start, ".");
+            break;
+        case 1:
+            strcpy(start, "!");
+            break;
+        case 2:
+            strcpy(start, "?");
+            break;
         }
-
-        createGraphFromFile(input);                  /* Leggo il file di input e preparo la struttura del grafo */
-        writeOnFile(output, atoi(numParole), start); /* Con una passeggiata sul grafo, scrivo sul file di output */
-
-        end = clock();
-        cpu_time_used = ((double)(end - startTime)) / CLOCKS_PER_SEC;
-
-        printf("Programma andato a buon fine, sono state scritte %s parole in %.4f secondi!\n\n", numParole, cpu_time_used);
-
-        exit(0);
     }
 
-    /* Versione 1 del programma (senza grafo) */
-    FILE *fp;
-    fp = fopen(input, "r"); /*Apro il file di input*/
+    createGraphFromFile(input); /* Leggo il file di input e preparo la struttura del grafo */
 
-    FILE *outFile;
-    outFile = fopen(output, "w+"); /*Apro il file di output*/
-
-    if (outFile == NULL || fp == NULL)
-    {
-        printf("Errore nell'apertura dei file.");
-        exit(1);
-    }
-
-    char line[MAX_LINE_LENGHT]; /* in questo buffer, inserirò la linea corrente letta dal file */
-
-    searchAndWriteWord(fp, atoi(numParole) + 1, start, 1, outFile, 0, line); /*Avvio il procedimento sulla prima parola*/
-
-    fclose(fp);
-    fclose(outFile);
+    writeOnFile(output, atoi(numParole), start); /* Con una passeggiata sul grafo, scrivo sul file di output */
 
     end = clock();
     cpu_time_used = ((double)(end - startTime)) / CLOCKS_PER_SEC;
-    printf("Programma andato a buon fine in %.3f secondi!\n", cpu_time_used);
+
+    printf("Programma andato a buon fine, sono state scritte %s parole in %.4f secondi!\n\n", numParole, cpu_time_used);
+
+    exit(0);
 }

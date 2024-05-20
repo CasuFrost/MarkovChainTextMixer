@@ -1,6 +1,8 @@
 #include "../headers/rootHeader.h"
 
-void readFileAndSendWords(char *input, int Input_Graph_Pipe[2], int endPipe[2], int nextStep_Pipe[2], int endPipe2[2])
+void readFileAndSendWords(char *input, int Input_Graph_Pipe[2], int endPipe[2], int nextStep_Pipe[2], int endPipe2[2]) /*Questa funzione viene eseguita da uno dei
+ due processi che operano sul compito 2, si occupa di leggere il file, leggendo riga per riga, inviandole poi all'altro processo che le
+ utilizzerà per creare la struttura dati*/
 {
     char readbuffer[80];
 
@@ -107,7 +109,7 @@ void readFileAndSendWords(char *input, int Input_Graph_Pipe[2], int endPipe[2], 
         }
         wordCounter++;
     }
-    write(endPipe2[1], "end\0", 5);
+    write(endPipe2[1], "end\0", 5); /*Notifica di aver terminato con la lettura del file*/
     write(Input_Graph_Pipe[1], "end", 3);
     printf("terminato il processo che legge il file CSV.\n");
     exit(0);

@@ -1,4 +1,4 @@
-/* Questo file si occupa di gestire un array di parole di lunghezza massima 30 byte.
+/* Questo file si occupa di gestire un array di parole di lunghezza massima 62 byte.
 Il termine array, è in realtà improprio, in quanto tale struttura sarà
 un insieme.*/
 #include "../headers/wordArray.h"
@@ -14,24 +14,14 @@ struct WordElement
 
 struct WordElement *buckets[HASHSIZE] = {NULL}; /* Struttura che conterrà l'hashTable */
 
-int collisionCounter = 0;
+/*Verrà utilizzata una hash table per controllare in tempo costante se una parola è già stata considerata o no*/
+
+int collisionCounter = 0; /*Calcolo delle collisioni nell'hashtable durante l'esecuzione */
 
 int *matrix;
 int n;
 
-void checkBucketSize()
-{
-    for (int i = 0; i < HASHSIZE; i++)
-    {
-        struct WordElement *tmp = buckets[i];
-        while (tmp->next != NULL)
-        {
-            tmp = tmp->next;
-        }
-    }
-}
-
-int checkIfWordInHashMap(char word[WORD_LENGHT]) /* controlla se nell'hashTable vi è già una parola */
+int checkIfWordInHashMap(char word[WORD_LENGHT]) /* controlla se nell'hashTable vi è già la parola data in input*/
 {
 
     int hashVal = hash(word);
@@ -65,8 +55,6 @@ int getWordIdFromHashMap(char word[WORD_LENGHT]) /* restituisce l'ID relativo al
     if (buckets[hashVal] == NULL)
     {
         printf("errore su %s indice : %d\n", word, hashVal);
-        // printf("HASMAP : \n");
-        // printHashMap();
         exit(1);
     }
     else
@@ -101,19 +89,16 @@ void freeHashMap()
 void freeMatrix()
 {
     free(matrix);
-    // printf("collisioni : %d\n", collisionCounter);
 }
 
 void printHashMap()
 {
-    // int bucketsUsed = 0;
     int wordsInHashMap = 0;
     for (int i = 0; i < HASHSIZE; i++)
     {
         int wordInBuckets = 0;
         if (buckets[i] != NULL)
         {
-            // bucketsUsed++;
             printf("%d : %s", i, buckets[i]->word);
             wordsInHashMap++;
             wordInBuckets++;
@@ -128,7 +113,6 @@ void printHashMap()
                     printf("--> %s", tmp->word);
                 }
             }
-            // printf("%d contiene : %d parole", i, wordInBuckets);
             printf("\n");
         }
     }
@@ -178,7 +162,7 @@ eseguire il controllo in tempo costante*/
     }
 }
 
-void printMatrix(int wordsCounter, int f)
+void printMatrix(int wordsCounter, int f) /*per printare a schermo, o su un file, la matrice creata*/
 {
     FILE *fp1 = fopen("matrix1.txt", "w+");
     FILE *fp2 = fopen("matrix2.txt", "w+");

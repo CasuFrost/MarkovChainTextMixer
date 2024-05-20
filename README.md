@@ -49,7 +49,7 @@ generazione casuale del testo a partire da un file CSV contenete le frequenze. T
 
 ``` -s ``` Specifica la parola che verrà utilizzata come punto di partenza nel compito 2, 
 è necessario che la parola sia presente nel file CSV. La parola specificata deve essere 
-necessariamente minuscola.
+necessariamente minuscola. Se tale comando è assente, verrà selezionato una punteggiatura casualmente fra quelle presenti, e la prima parola del testo verrà scelta casualmente fra quelle che seguono tale punteggiatura.
 
-``` -m ``` Se presente, verrà eseguita la versione multi processo del programma, altrimenti, verrà eseguita la versione con un solo processo.
+``` -m ``` Se presente, verrà eseguita la versione multi processo del programma, altrimenti, verrà eseguita la versione con un singolo processo.
 

@@ -6,8 +6,6 @@ struct Edge;
 
 void addNearId(int nodeFrom, int nodeTo, float w);
 
-void addNear(struct Node *nodeFrom, struct Node *nodeTo, float w);
-
 void createEdge(struct Node *node1, struct Node *node2, float w);
 
 void printGraph();
