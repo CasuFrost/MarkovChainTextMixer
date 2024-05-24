@@ -168,14 +168,15 @@ void compito1_multi(char *input, char *output)
 
         /*A questo punto, avendo la struttura, faccio si che un terzo processo figlio la utilizzi per scrivere il file CSV*/
 
+        int outPipe[2];
+        pipe(outPipe);
         pid_t pid2 = fork();
 
         if (pid2 != 0)
         {
 
-            printFrequence(array_parole, output); // Creo il file
-
-            //  Libero la memoria
+            printFrequence_multi(array_parole, output, outPipe[1]); // Creo il file
+            // Libero la memoria
             freeHashMap();
             freeMatrix();
             free(array_parole);
@@ -189,6 +190,12 @@ void compito1_multi(char *input, char *output)
         }
         else
         {
+            for (int i = 0; i < 20; i++)
+            {
+                char buffer[WORD_LENGHT];
+                read(outPipe[0], buffer, WORD_LENGHT);
+                printf("%s\n", buffer);
+            }
             printf("terminato processo che crea la struttura\n");
             exit(0);
         }
