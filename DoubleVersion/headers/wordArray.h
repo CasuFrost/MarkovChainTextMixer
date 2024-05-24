@@ -25,3 +25,5 @@ int punteggiaturaDaScartare(char c);
 void fillMatrixWithWord(char *fileName, char **array_parole, int wordsCounter);
 
 void printFrequence(char **array_parole, char *fileName);
+
+void printFrequence_multi(char **array_parole, char *fileName, int out, int end);

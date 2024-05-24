@@ -141,62 +141,84 @@ void compito1_multi(char *input, char *output)
     pid = fork();
     if (pid == 0)
     {
-        int wordsCounter = 0; /*Questa variabile conterrà il numero di parole distinte contenute nel file*/
-
-        char **array_parole = malloc(0); /* Questo array conterrà tutte le parole distinte contenute nel file*/
-
-        while (1) /* il processo figlio riceve le parole finche il processo padre le invia tramite la pipe*/
-        {
-            if (read(inputPipe[0], buf, WORD_LENGHT) == -1)
-            {
-                if (read(endPipe[0], usless, 1) != -1)
-                {
-                    /*Quando il processo padreha finito di leggere il file, lo notifica scrivendo sulla pipe 'endPipe' */
-                    break;
-                }
-                else
-                {
-                    continue;
-                }
-            }
-            addWord(&array_parole, &wordsCounter, buf); // Aggiungo la parola letta dalla pipe all'array
-        }
-
-        initMatrix(wordsCounter); // Inizializzo la matrice con numero di righe e colonne identico al numero delle parole distinte lette nel file
-
-        fillMatrixWithWord(input, array_parole, wordsCounter); // Riempio i campi della matrice
-
-        /*A questo punto, avendo la struttura, faccio si che un terzo processo figlio la utilizzi per scrivere il file CSV*/
 
         int outPipe[2];
         pipe(outPipe);
+        fcntl(outPipe[0], F_SETFL, O_NONBLOCK);
+        int endPipe2[2];
+        pipe(endPipe2);
+        fcntl(endPipe2[0], F_SETFL, O_NONBLOCK);
+
         pid_t pid2 = fork();
 
         if (pid2 != 0)
         {
+            int wordsCounter = 0; /*Questa variabile conterrà il numero di parole distinte contenute nel file*/
 
-            printFrequence_multi(array_parole, output, outPipe[1]); // Creo il file
+            char **array_parole = malloc(0); /* Questo array conterrà tutte le parole distinte contenute nel file*/
+
+            while (1) /* il processo figlio riceve le parole finche il processo padre le invia tramite la pipe*/
+            {
+                if (read(inputPipe[0], buf, WORD_LENGHT) == -1)
+                {
+                    if (read(endPipe[0], usless, 1) != -1)
+                    {
+                        /*Quando il processo padreha finito di leggere il file, lo notifica scrivendo sulla pipe 'endPipe' */
+                        break;
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+                addWord(&array_parole, &wordsCounter, buf); // Aggiungo la parola letta dalla pipe all'array
+            }
+
+            initMatrix(wordsCounter); // Inizializzo la matrice con numero di righe e colonne identico al numero delle parole distinte lette nel file
+
+            fillMatrixWithWord(input, array_parole, wordsCounter); // Riempio i campi della matrice
+
+            /*A questo punto, avendo la struttura, faccio si che un terzo processo figlio la utilizzi per scrivere il file CSV*/
+
+            printFrequence_multi(array_parole, output, outPipe[1], endPipe2[1]); // Mando le cose da scrivere al processo che si occupa di creare il file CSV
+
             // Libero la memoria
             freeHashMap();
             freeMatrix();
             free(array_parole);
-            printf("terminato processo che scrive il CSV\n");
+            printf("terminato processo che crea la struttura\n");
+
             printf("parole distinte nel testo : %d\n", wordsCounter); /* Per scrivere a schermo statistiche relative all'HashTable */
 
-            end = clock();
-            cpu_time_used = ((double)(end - startTime)) / CLOCKS_PER_SEC;
-            printf("programma andato a buon fine in %.4f secondi.\n\n", cpu_time_used);
             exit(0);
         }
         else
         {
-            for (int i = 0; i < 20; i++)
+            /*Processo che attende le parole+frequenze da scrivere sul file CSV*/
+            FILE *fp;
+
+            fp = fopen(output, "w+"); // Creo il puntatore al file
+
+            char endBuf[100];
+            char buffer[100];
+            int e = -1;
+            int n = -1;
+            while (1)
             {
-                char buffer[WORD_LENGHT];
-                read(outPipe[0], buffer, WORD_LENGHT);
-                printf("%s\n", buffer);
+                e = read(endPipe2[0], endBuf, 2);
+                if (e != -1) /* Finite le parole da scrivere sul file */
+                {
+                    break;
+                }
+
+                n = read(outPipe[0], buffer, WORD_LENGHT);
+                if (n != -1)
+                {
+                    fprintf(fp, "%s", buffer);
+                }
             }
-            printf("terminato processo che crea la struttura\n");
+            printf("terminato processo che scrive il CSV\n");
+            fclose(fp);
             exit(0);
         }
     }
@@ -207,6 +229,9 @@ void compito1_multi(char *input, char *output)
         printf("terminato processo che legge il file di testo\n");
         int status;
         wait(&status);
+        end = clock();
+        cpu_time_used = ((double)(end - startTime)) / CLOCKS_PER_SEC;
+        printf("programma andato a buon fine in %.4f secondi.\n\n", cpu_time_used);
         exit(0);
     }
 }

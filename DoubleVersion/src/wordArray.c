@@ -405,18 +405,9 @@ void printFrequence(char **array_parole, char *fileName) /*Questa funzione legge
     fclose(fp);
 }
 
-void printFrequence_multi(char **array_parole, char *fileName, int out) /*Questa funzione legge la matrice e stampa sul file*/
+void printFrequence_multi(char **array_parole, char *fileName, int out, int end) /*Questa funzione legge la matrice ed invia al processo che si occupa del file CSV le righe da scrivere*/
 {
-    FILE *fp;
-
-    fp = fopen(fileName, "w+"); // Creo il puntatore al file
-
-    if (fp == NULL)
-    {
-        printf("il percorso %s non è stato trovato\n", fileName);
-        exit(1);
-    }
-
+    char accapo[WORD_LENGHT] = "\n";
     for (int i = 0; i < n; i++) /*Scorro ogni riga della matrice*/
     {
         // Faccio la somma della riga attuale
@@ -426,22 +417,22 @@ void printFrequence_multi(char **array_parole, char *fileName, int out) /*Questa
             rawSum += matrix[i * n + j];
         }
 
-        // fprintf(fp, "%s", array_parole[i]); // Scrivo la parola corrente
         write(out, array_parole[i], WORD_LENGHT);
         for (int j = 0; j < n; j++) /*Scorro le parole che la seguono*/
         {
             if (matrix[i * n + j] != 0) /*Se le occorrenze sono diverse da zero, devo scrivere la frequenza*/
             {
                 float f = (float)matrix[i * n + j] / (float)rawSum;
-                // fprintf(fp, ",%s,%f", array_parole[j], f);
-                write(out, array_parole[j], WORD_LENGHT);
+
+                char tmp[100];
+                sprintf(tmp, ",%s,%f", array_parole[j], f);
+                write(out, tmp, WORD_LENGHT);
             }
         }
         if (i != n - 1)
         {
-            write(out, "\n", WORD_LENGHT);
-            // fprintf(fp, "\n"); // Vado a capo nel file CSV
+            write(out, accapo, WORD_LENGHT);
         }
     }
-    fclose(fp);
+    write(end, "a", 2);
 }
