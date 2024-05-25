@@ -434,5 +434,6 @@ void printFrequence_multi(char **array_parole, char *fileName, int out, int end)
             write(out, accapo, WORD_LENGHT);
         }
     }
-    write(end, "a", 2);
+    char endBuf[10] = "finito";
+    write(end, endBuf, 10);
 }

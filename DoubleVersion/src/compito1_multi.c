@@ -201,23 +201,32 @@ void compito1_multi(char *input, char *output)
 
             char endBuf[100];
             char buffer[100];
-            int e = -1;
-            int n = -1;
+            int e = 1;
+            int fine = 0;
+            int n = 1;
             while (1)
             {
-                e = read(endPipe2[0], endBuf, 2);
-                if (e != -1) /* Finite le parole da scrivere sul file */
+                e = read(endPipe2[0], endBuf, 10);
+                n = read(outPipe[0], buffer, WORD_LENGHT);
+
+                if (e != -1 || fine == 1) /* Finite le parole da scrivere sul file */
                 {
-                    break;
+                    fine = 1; /* Il processo che scrive il CSV ora sa che il processo dalla quale riceve le parole ha terminato di inviare.*/
+
+                    if (n == -1)
+                    {
+
+                        break;
+                    }
                 }
 
-                n = read(outPipe[0], buffer, WORD_LENGHT);
                 if (n != -1)
                 {
                     fprintf(fp, "%s", buffer);
                 }
             }
-            printf("terminato processo che scrive il CSV\n");
+
+            printf("Finito il processo che scrive il CSV!\n");
             fclose(fp);
             exit(0);
         }
