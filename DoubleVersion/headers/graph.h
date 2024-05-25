@@ -20,4 +20,5 @@ int selectNearId(int id);
 
 void writeOnFile(char *fileName, int words, char start[WORD_LENGHT]);
 
+void writeOnFile_multi(int words, char start[WORD_LENGHT], int outputPipe, int endPipe); /*Questa funzione legge il grafo contenente le parole e le frequenze, ed eseguendo una passeggiata*/
 void freeGraphStructures();

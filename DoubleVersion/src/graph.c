@@ -404,6 +404,84 @@ sul grafo, scrive il contenuto sul file*/
     fclose(fp);
 }
 
+void writeOnFile_multi(int words, char start[WORD_LENGHT], int outputPipe, int endPipe) /*Questa funzione legge il grafo contenente le parole e le frequenze, ed eseguendo una passeggiata
+ sul grafo, invia ad un altro processo le parole che dovrà scrivere sul file txt*/
+{
+
+    lowerCase(start);
+
+    int firstWord = 0; /* Questa variabile serve esclusivamente ad indicare quando o no andare a capo*/
+
+    if (getIdFromWordHasMap(start) == -1) /* Se il punto di partenza non è presente, si parte dal punto */
+    {
+        if ((strcmp(start, "!") == 0) || (strcmp(start, "?") == 0))
+        {
+            strcpy(start, ".");
+        }
+        else
+        {
+            printf("La parola che hai inserito, ossia %s non è presente nel testo!\n", start);
+            exit(1);
+        }
+    }
+
+    printf("parola iniziale :  %s\n", start);
+
+    int maiusc = 1;
+
+    if (!((strcmp(start, "!") == 0) || (strcmp(start, "?") == 0) || (strcmp(start, ".") == 0)))
+    {
+        char tmp[WORD_LENGHT];
+        start[0] -= 32;
+
+        write(outputPipe, start, WORD_LENGHT);
+        start[0] += 32;
+        maiusc = 0;
+    }
+
+    int id = selectNearId(getIdFromWordHasMap(start));
+
+    char tmp[WORD_LENGHT];
+    char accapo[WORD_LENGHT] = "\n";
+    while (words > 0)
+    {
+        strcpy(tmp, nodes[id].word);
+
+        if (maiusc == 1) /* Controllo se la parola deve avere la prima lettera maiuscola */
+        {
+            if (tmp[0] > 96 && tmp[0] < 123)
+            {
+                tmp[0] -= 32;
+            }
+            maiusc = 0;
+        }
+        write(outputPipe, tmp, WORD_LENGHT);
+
+        id = selectNearId(id); /* Seleziono la prossima parola tramite uno dei nodi adiacenti al nodo attuale */
+
+        if (strcmp(tmp, ".") == 0 || strcmp(tmp, "!") == 0 || strcmp(tmp, "?") == 0)
+        {
+            /* Se la parola attuale è un punto, la prossima avrà la iniziale maiuscola */
+            maiusc = 1;
+        }
+
+        if (words % 20 == 0 && firstWord == 1) /* Ogni 20 parole, vado a capo */
+        {
+
+            write(outputPipe, accapo, WORD_LENGHT);
+        }
+
+        firstWord = 1;
+        words--;
+    }
+
+    printf("collisioni : %d\n", collisionsCounter);
+    freeGraphStructures(); /* Libero le strutture del grafo che ho allocato */
+
+    char endMsg[10] = "fine";
+    write(endPipe, endMsg, 10);
+}
+
 void freeGraphStructures()
 {
 
