@@ -1,8 +1,8 @@
 #include "../headers/rootHeader.h"
 
-void readFileAndSendWords(char *input, int Input_Graph_Pipe[2], int endPipe[2], int nextStep_Pipe[2], int endPipe2[2]) /*Questa funzione viene eseguita da uno dei
- due processi che operano sul compito 2, si occupa di leggere il file, leggendo riga per riga, inviandole poi all'altro processo che le
- utilizzerà per creare la struttura dati*/
+void readFileAndSendWords(char *input, int Input_Graph_Pipe[2], int endPipe[2], int nextStep_Pipe[2], int endPipe2[2], int Input_Graph_Pipe2[2]) /*Questa funzione viene eseguita da uno dei
+  due processi che operano sul compito 2, si occupa di leggere il file, leggendo riga per riga, inviandole poi all'altro processo che le
+  utilizzerà per creare la struttura dati*/
 {
     char readbuffer[80];
 
@@ -36,10 +36,10 @@ void readFileAndSendWords(char *input, int Input_Graph_Pipe[2], int endPipe[2], 
         }
 
         // 'tmp' contiene la prima parola
-        write(Input_Graph_Pipe[1], tmp, (strlen(tmp) + 1));
-        write(endPipe[1], "aaa", 3);
+        write(Input_Graph_Pipe[1], tmp, WORD_LENGHT);
+        // write(endPipe[1], "aaa", 3);
 
-        read(nextStep_Pipe[0], readbuffer, sizeof(readbuffer)); // Il figlio attende l'ordine del padre per la prossima parola
+        // read(nextStep_Pipe[0], readbuffer, sizeof(readbuffer)); // Il figlio attende l'ordine del padre per la prossima parola
     }
     write(endPipe[1], "end\0", 4);
 
@@ -92,12 +92,10 @@ void readFileAndSendWords(char *input, int Input_Graph_Pipe[2], int endPipe[2], 
 
                 char buffer[3 * WORD_LENGHT];
                 sprintf(buffer, "%d %s %s", wordCounter, tmp, freq);
+                // printf("mando %s\n", buffer);
+                write(Input_Graph_Pipe2[1], buffer, 3 * WORD_LENGHT);
 
-                write(endPipe2[1], "aaa\0", 5);
-
-                write(Input_Graph_Pipe[1], buffer, (strlen(buffer) + 1));
-
-                read(nextStep_Pipe[0], readbuffer, sizeof(readbuffer)); // Il figlio attende l'ordine del padre per la prossima parola
+                // read(nextStep_Pipe[0], readbuffer, sizeof(readbuffer)); // Il figlio attende l'ordine del padre per la prossima parola
             }
             else
             {
@@ -109,8 +107,7 @@ void readFileAndSendWords(char *input, int Input_Graph_Pipe[2], int endPipe[2], 
         }
         wordCounter++;
     }
-    write(endPipe2[1], "end\0", 5); /*Notifica di aver terminato con la lettura del file*/
-    write(Input_Graph_Pipe[1], "end", 3);
+    write(endPipe2[1], "AAA\0", 5); /*Notifica di aver terminato con la lettura del file*/
+
     printf("terminato il processo che legge il file CSV.\n");
-    exit(0);
 }

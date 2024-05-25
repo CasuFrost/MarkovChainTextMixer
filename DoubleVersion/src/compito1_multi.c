@@ -1,7 +1,6 @@
 #include "../headers/compito1_multi.h"
 #include "../headers/ioOperation.h"
 #include "../headers/wordArray.h"
-#include <sys/wait.h>
 
 double cpu_time_used;
 clock_t startTime, end; // variabili utilizzate per calcolare il tempo di esecuzione del programma

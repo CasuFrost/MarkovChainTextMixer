@@ -69,6 +69,7 @@ void compito2_multi(char *input, char *output, char *numParole, char start[WORD_
 {
     srand(time(NULL));
     int Input_Graph_Pipe[2];
+    int Input_Graph_Pipe2[2];
     int nextStep_Pipe[2];
     int endPipe[2];
     int endPipe2[2];
@@ -76,8 +77,9 @@ void compito2_multi(char *input, char *output, char *numParole, char start[WORD_
     pid_t pid;
 
     pipe(Input_Graph_Pipe); // Questa pipe verrà utilizzata per i dati
-    pipe(nextStep_Pipe);    // Questa pipe verrà per coordinare figlio e padre
-    pipe(endPipe);          // Questa pipe verrà utilizzata per decretare la fine della lettura
+    pipe(Input_Graph_Pipe2);
+    pipe(nextStep_Pipe); // Questa pipe verrà per coordinare figlio e padre
+    pipe(endPipe);       // Questa pipe verrà utilizzata per decretare la fine della lettura
     pipe(endPipe2);
 
     if ((pid = fork()) == -1)
@@ -89,7 +91,10 @@ void compito2_multi(char *input, char *output, char *numParole, char start[WORD_
     if (pid != 0)
     {
         /*Questo è il processo che legge il file CSV ed invia ad un altro processo le righe lette, per la creazione della struttura*/
-        readFileAndSendWords(input, Input_Graph_Pipe, endPipe, nextStep_Pipe, endPipe2);
+        readFileAndSendWords(input, Input_Graph_Pipe, endPipe, nextStep_Pipe, endPipe2, Input_Graph_Pipe2);
+        int status;
+        wait(&status);
+        exit(0);
     }
     else
     {
@@ -146,49 +151,75 @@ void compito2_multi(char *input, char *output, char *numParole, char start[WORD_
                 }
             }
             fclose(fp);
-            printf("terminato il processo che scrive il file di testo casuale.\n\n");
+            printf("terminato il processo che scrive il file di testo casuale.\n");
+            exit(0);
         }
         else
         {
             /*Questo processo riceve le righe del CSV e crea la struttura*/
             close(Input_Graph_Pipe[1]);
 
-            char readbuffer[WORD_LENGHT];
+            char readbuffer[WORD_LENGHT * 3];
             char endBuffer[80];
-
+            int finito_lettura = 0;
+            fcntl(endPipe[0], F_SETFL, O_NONBLOCK);
+            fcntl(endPipe2[0], F_SETFL, O_NONBLOCK);
+            fcntl(Input_Graph_Pipe[0], F_SETFL, O_NONBLOCK);
+            fcntl(Input_Graph_Pipe2[0], F_SETFL, O_NONBLOCK);
             while (1)
             {
-                read(endPipe[0], endBuffer, sizeof(endBuffer));
+                int e = read(endPipe[0], endBuffer, sizeof(endBuffer));
 
-                if (strcmp(endBuffer, "end") == 0)
+                int n = read(Input_Graph_Pipe[0], readbuffer, WORD_LENGHT);
+                if (e != -1 || finito_lettura)
                 {
-                    break;
+                    finito_lettura = 1;
+                    if (n == -1)
+                    {
+                        break;
+                    }
                 }
-                read(Input_Graph_Pipe[0], readbuffer, sizeof(readbuffer));
-
-                createNode(readbuffer);
-                write(nextStep_Pipe[1], "nulla", 1); // Il padre notifica al figlio che può scrivere la prossima parola sulla PIPE
+                if (n != -1)
+                {
+                    // printf("%s\n", readbuffer);
+                    createNode(readbuffer);
+                }
+                // write(nextStep_Pipe[1], "nulla", 1); // Il padre notifica al figlio che può scrivere la prossima parola sulla PIPE
             }
 
+            finito_lettura = 0;
             while (1)
             {
 
-                read(endPipe2[0], endBuffer, sizeof(endBuffer));
+                int e = read(endPipe2[0], endBuffer, sizeof(endBuffer));
 
-                if (strcmp(endBuffer, "end\0") == 0)
+                int n = read(Input_Graph_Pipe2[0], readbuffer, 3 * WORD_LENGHT);
+
+                if (e != -1 || finito_lettura == 1)
                 {
 
-                    break;
+                    finito_lettura = 1;
+                    if (n == -1)
+                    {
+                        break;
+                    }
                 }
-                read(Input_Graph_Pipe[0], readbuffer, sizeof(readbuffer));
+                if (n != -1)
+                {
+                    // printf("letto : %s\n", readbuffer);
+                    readStringReciviedFromPipe(readbuffer);
+                }
 
-                readStringReciviedFromPipe(readbuffer);
-
-                write(nextStep_Pipe[1], "nulla", 1); // Il padre notifica al figlio che può scrivere la prossima parola sulla PIPE
+                // write(nextStep_Pipe[1], "nulla", 1); // Il padre notifica al figlio che può scrivere la prossima parola sulla PIPE
             }
+            // printGraph();
             writeOnFile_multi(atoi(numParole), start, outPipe[1], endPipe3[1]);
             printf("terminato il processo che crea la struttura.\n");
+            int status;
+            wait(&status);
+            exit(0);
         }
-        exit(0);
     }
+
+    exit(0);
 }

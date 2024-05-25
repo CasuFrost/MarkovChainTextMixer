@@ -8,6 +8,7 @@
 #include <time.h>
 #include <unistd.h>
 #include <signal.h>
+#include <sys/wait.h>
 
 #define HASHSIZE 1000
 #define MAX_LINE_LENGHT 150000
