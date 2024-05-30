@@ -3,6 +3,7 @@
 #include "../headers/compito1.h"
 #include "../headers/compito2_multi.h"
 #include "../headers/compito1_multi.h"
+#include <getopt.h>
 
 int main(int argc, char *argv[])
 {
