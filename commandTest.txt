@@ -29,18 +29,3 @@
 ./MCtextMixer -2 -o OUTPUT/randomTxt/misto.txt  -i OUTPUT/CSV/misto.csv -n 900 -m
 ./MCtextMixer -2 -o OUTPUT/randomTxt/2MB.txt  -i OUTPUT/CSV/2MB.csv -n 900 -m
 ./MCtextMixer -2 -o OUTPUT/randomTxt/informatica.txt  -i OUTPUT/CSV/informatica.csv -n 900 -m
-
-
-
-TEST : 
-
-./MCtextMixer -1 -i testFile/harrypotter.txt -o OUTPUT/CSV/harrypotterM.csv -m
-./MCtextMixer -1 -i testFile/commedia.txt -o OUTPUT/CSV/commediaM.csv -m
-./MCtextMixer -1 -i testFile/lotr.txt -o OUTPUT/CSV/lotrM.csv -m
-./MCtextMixer -1 -i testFile/misto.txt -o OUTPUT/CSV/mistoM.csv -m
-./MCtextMixer -1 -i testFile/informatica.txt -o OUTPUT/CSV/informaticaM.csv -m
-./MCtextMixer -1 -i testFile/10kWords.txt -o OUTPUT/CSV/10kWordsM.csv -m
-./MCtextMixer -1 -i testFile/2MB.txt -o OUTPUT/CSV/2MBM.csv -m
-
-./MCtextMixer -1 -i testFile/informatica.txt -o OUTPUT/CSV/informatica.csv 
-./MCtextMixer -1 -i testFile/informatica.txt -o OUTPUT/CSV/informaticaM.csv -m

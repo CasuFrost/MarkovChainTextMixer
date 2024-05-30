@@ -1,4 +1,17 @@
 # Markov Chain Text Mixer
+## Funzionamento
+
+
+Questo programma esegue due compiti distinti :
+
+ - *COMPITO 1* :  dato un testo in Italiano, produca una tabella contenente per ogni parola del testo le 
+parole immediatamente successive e la loro frequenza di occorrenza nel testo;
+ - *COMPITO 2* : generi un testo in maniera casuale usando la frequenza delle parole calcolata nel 
+punto 1.
+
+---
+
+
 
 ## Utilizzo
 
